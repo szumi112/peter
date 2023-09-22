@@ -9,12 +9,17 @@ const Navigation = () => {
     signOut(database).then(navigate("/"));
   };
   return (
-    <Box>
+    <Box mb={8}>
       <Flex justifyContent={"space-between"} alignItems={"ce"}>
         <Text fontSize={"32px"} fontWeight="bold">
           Dashboard
         </Text>
-        <Button onClick={handleClick}>Log out</Button>
+        <Flex>
+          <Button onClick={navigate("/admin")} mr={8} colorScheme="red">
+            Admin Panel
+          </Button>
+          <Button onClick={handleClick}>Log out</Button>
+        </Flex>
       </Flex>
     </Box>
   );

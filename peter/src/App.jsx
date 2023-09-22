@@ -7,6 +7,7 @@ import { database } from "./firebase-config/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import LoginPlease from "./not-found/login-please";
 import ColorModeSwitch from "./color-mode/color-mode-switch";
+import Admin from "./admin/admin";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
@@ -33,6 +34,11 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
           ) : (
             <Route path="/dashboard" element={<LoginPlease />} />
+          )}
+          {isAuth ? (
+            <Route path="/admin" element={<Admin />} />
+          ) : (
+            <Route path="/admin" element={<LoginPlease />} />
           )}
         </Routes>
       </Box>

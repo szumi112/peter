@@ -11,7 +11,7 @@ const ColorModeSwitch = () => {
     setIsDarkMode(!isDarkMode);
     setTimeout(() => {
       toggleColorMode();
-    }, 1000);
+    }, 300);
   };
 
   return (
