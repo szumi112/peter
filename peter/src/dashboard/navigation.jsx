@@ -15,7 +15,7 @@ const Navigation = () => {
           Dashboard
         </Text>
         <Flex>
-          <Button onClick={navigate("/admin")} mr={8} colorScheme="red">
+          <Button onClick={() => navigate("/admin")} mr={8} colorScheme="red">
             Admin Panel
           </Button>
           <Button onClick={handleClick}>Log out</Button>

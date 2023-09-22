@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -12,11 +12,18 @@ import {
   Text,
   Flex,
   Select,
+  Image,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "../firebase-config/firebase-config";
+
 const Admin = () => {
+  const loadCollectionRef = collection(db, "loads");
+  const michal = "jestem Michal i lubie";
   const navigate = useNavigate();
+  const [loads, setLoads] = useState([]);
   const [data, setData] = useState([]);
   const [formData, setFormData] = useState({
     email: "",
@@ -41,7 +48,7 @@ const Admin = () => {
     rate_currency: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -49,7 +56,8 @@ const Admin = () => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    await addDoc(loadCollectionRef, { formData });
     const newData = {
       ref: {
         mp_po: formData.ref_mp_po,
@@ -109,10 +117,24 @@ const Admin = () => {
     });
   };
 
+  useEffect(() => {
+    const getLoads = async () => {
+      const data = await getDocs(loadCollectionRef);
+      setLoads(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    getLoads();
+  }, []);
+
+  console.log(loads);
+
   return (
     <Box p={4}>
-      <Button onClick={() => navigate("/dashboard")} variant={"link"}>
-        Back to dashboard
+      <Button
+        onClick={() => navigate("/dashboard")}
+        variant={"link"}
+        _hover={{ color: "blue.300" }}
+      >
+        {"\u{1F868}"} Back to dashboard
       </Button>
       <Text fontSize="32px" my={4}>
         Admin Panel
@@ -283,7 +305,6 @@ const Admin = () => {
           </Flex>
 
           <Flex justifyContent={"space-between"} my={1}>
-            {" "}
             <Input
               type="text"
               name="delivery_time"
@@ -304,7 +325,6 @@ const Admin = () => {
           </Flex>
 
           <Flex justifyContent={"space-between"} my={1}>
-            {" "}
             <Input
               type="text"
               name="rate"
@@ -345,19 +365,40 @@ const Admin = () => {
           </Tr>
         </Thead>
         <Tbody fontSize={"12px"}>
-          {data.map((load, index) => (
+          {loads.map((load, index) => (
             <>
               <Tr key={index}>
-                <Td>{load.email}</Td>
-                <Td>{`${load.ref.mp_po}/${load.ref.ref}`}</Td>
+                <Td>{load.formData.email}</Td>
                 <Td>
-                  {load.status.number}, {load.status.description}
+                  MP PO: {load.formData.ref_mp_po} <br />
+                  References: {load.formData.ref_ref}
                 </Td>
-                <Td>{`${load.collection.city}, ${load.collection.street}, ${load.collection.zip_code}, ${load.collection.country}`}</Td>
-                <Td>{`${load.delivery.city}, ${load.delivery.street}, ${load.delivery.zip_code}, ${load.delivery.country}`}</Td>
-                <Td>{`${load.dates.Collection}, ${load.dates.CollectionTime}, ${load.dates.Delivery}, ${load.dates.DeliveryTime}`}</Td>
-                <Td>{load.vehicle_pallet}</Td>
-                <Td>{load.rate}</Td>
+                <Td>
+                  {load.formData.status} <br />{" "}
+                  {load.formData.status_description}
+                </Td>
+                <Td>
+                  {load.formData.collection_city}, <br />
+                  {load.formData.collection_street},
+                  {load.formData.collection_zip_code}, <br />
+                  {load.formData.collection_country}
+                </Td>
+                <Td>
+                  {load.formData.delivery_city}, <br />
+                  {load.formData.delivery_street},
+                  {load.formData.delivery_zip_code}, <br />
+                  {load.formData.delivery_country}
+                </Td>
+                <Td>
+                  {load.formData.collection_date},{" "}
+                  {load.formData.collection_time}
+                  , <br />
+                  {load.formData.delivery_date}, {load.formData.delivery_time}
+                </Td>
+                <Td>{load.formData.vehicle_pallet}</Td>
+                <Td>
+                  {load.formData.rate_currency} {load.formData.rate}
+                </Td>
                 <Td>
                   <Flex justifyContent="flex-end">
                     <Button mr={1} size="sm">
@@ -369,6 +410,12 @@ const Admin = () => {
                   </Flex>
                 </Td>
               </Tr>
+              {data?.notes && (
+                <Flex mt={3}>
+                  <Text>Notes:</Text>
+                  <Text>{data?.notes}</Text>
+                </Flex>
+              )}
             </>
           ))}
         </Tbody>
