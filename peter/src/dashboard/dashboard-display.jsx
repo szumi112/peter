@@ -21,11 +21,11 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 
-import loadsData from "./data";
+// import loadsData from "./data";
 import "./table.css";
 
 import { db } from "../firebase-config/firebase-config";
-import { collection, getDocs } from "@firebase/firestore";
+import { collection, getDocs, updateDoc, doc } from "@firebase/firestore";
 
 const possibleStatusColors = [
   "green.400",
@@ -45,6 +45,20 @@ const DashboardDisplay = () => {
   const [userMessage, setUserMessage] = useState("");
   const [loads, setLoads] = useState([]);
   const loadsCollectionRef = collection(db, "loads");
+  const isMobile = window.innerWidth <= 1100;
+
+  const updateLoad = async (id, note) => {
+    const loadDoc = doc(db, "loads", id);
+    const newFields = {
+      note: note,
+    };
+    await updateDoc(loadDoc, newFields);
+    updateLoad();
+  };
+
+  useEffect(() => {
+    updateLoad();
+  }, [userMessage]);
 
   useEffect(() => {
     const getLoads = async () => {
@@ -86,7 +100,7 @@ const DashboardDisplay = () => {
           </Tr>
         </Thead>
         <Tbody fontSize={"12px"}>
-          {loadsData.map((load, index) => (
+          {loads.map((load, index) => (
             <Tr
               key={index}
               color={colorMode === "dark" ? "gray.200" : "gray.700"}
@@ -104,7 +118,7 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.ref.mp_po},
+                    {load.formData.ref_mp_po},
                   </Text>
                 </Flex>
                 <Flex>
@@ -119,64 +133,94 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.ref.ref}
+                    {load.formData.ref_ref}
                   </Text>
                 </Flex>
               </Td>
               <Td>
-                <Flex>
-                  {Array.from({ length: 4 }, (_, i) => (
-                    <Box
-                      key={i}
-                      w="20px"
-                      h="5px"
-                      bg={i < load.status ? getRandomColor() : "gray.400"}
-                      borderRadius="20%"
-                      mr="2px"
-                    ></Box>
-                  ))}
+                <Flex flexDir={"column"}>
+                  <Text color="green.400">
+                    {load.formData.status_description}
+                  </Text>
+
+                  <Flex>
+                    {Array.from({ length: 4 }, (_, i) => (
+                      <Box
+                        key={i}
+                        w="20px"
+                        h="5px"
+                        bg={
+                          i < load.formData.status
+                            ? getRandomColor()
+                            : "gray.400"
+                        }
+                        borderRadius="20%"
+                        mr="2px"
+                      ></Box>
+                    ))}
+                  </Flex>
                 </Flex>
               </Td>
               <Td>
+                {isMobile && (
+                  <Text
+                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                    mr={3}
+                    fontWeight={"500"}
+                  >
+                    Collection:
+                  </Text>
+                )}
                 <Text
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
                   fontWeight={"500"}
                 >
-                  {load.collection.city}
+                  {load.formData.collection_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.collection.street}, {load.collection.zip_code}
+                  {load.formData.collection_street},{" "}
+                  {load.formData.collection_zip_cod}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.collection.country}
+                  {load.formData.collection_country}
                 </Text>
               </Td>
               <Td>
+                {isMobile && (
+                  <Text
+                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                    mr={3}
+                    fontWeight={"500"}
+                  >
+                    Delivery:
+                  </Text>
+                )}
                 <Text
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
                   fontWeight={"500"}
                 >
-                  {load.delivery.city}
+                  {load.formData.delivery_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.delivery.street}, {load.delivery.zip_code}
+                  {load.formData.delivery_street},{" "}
+                  {load.formData.delivery_zip_code}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.delivery.country}
+                  {load.formData.delivery_country}
                 </Text>
               </Td>
               <Td>
@@ -192,7 +236,8 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.dates.Collection}, {load.dates.CollectionTime}
+                    {load.formData.collection_date},{" "}
+                    {load.formData.collection_time}
                   </Text>
                 </Flex>
 
@@ -208,14 +253,42 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.dates.Delivery}, {load.dates.DeliveryTime}
+                    {load.formData.delivery_date}, {load.formData.delivery_time}
                   </Text>
                 </Flex>
               </Td>
-              <Td>{load.vehicle_pallet}</Td>
-              <Td>{load.rate}</Td>
               <Td>
-                <Button colorScheme="blue" size="sm" onClick={openModal}>
+                {isMobile && (
+                  <Text
+                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                    mr={3}
+                    fontWeight={"500"}
+                  >
+                    Vehicle Pallet:
+                  </Text>
+                )}
+                {load.formData.vehicle_pallet.toUpperCase()}
+              </Td>
+              <Td>
+                <Flex>
+                  {isMobile && (
+                    <Text
+                      color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                      mr={3}
+                      fontWeight={"500"}
+                    >
+                      Rate:
+                    </Text>
+                  )}
+                  {load.formData.rate_currency} {load.formData.rate}
+                </Flex>
+              </Td>
+              <Td>
+                <Button
+                  colorScheme="blue"
+                  size="sm"
+                  onClick={openModal(load.id)}
+                >
                   Notes
                 </Button>
                 <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -231,13 +304,25 @@ const DashboardDisplay = () => {
                       />
                     </ModalBody>
                     <ModalFooter>
-                      <Button colorScheme="blue" onClick={closeModal} mr={2}>
-                        Close
-                      </Button>
-                      <Button colorScheme="green" onClick={closeModal}>
-                        Save
-                      </Button>
+                      <Flex>
+                        <Button colorScheme="blue" onClick={closeModal} mr={2}>
+                          Close
+                        </Button>
+                        <Button
+                          colorScheme="green"
+                          onClick={(e) => {
+                            closeModal();
+                            updateLoad(load.id, userMessage);
+                          }}
+                        >
+                          {/* {load.id} */}
+                          Save
+                        </Button>
+                      </Flex>
                     </ModalFooter>
+                    <Flex px={6} pb={6}>
+                      {load.note}
+                    </Flex>
                   </ModalContent>
                 </Modal>
               </Td>

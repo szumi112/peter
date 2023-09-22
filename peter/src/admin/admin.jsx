@@ -148,8 +148,9 @@ const Admin = () => {
             value={formData.email}
             onChange={handleChange}
             w="100%"
+            mb={2}
           />
-          <Flex justifyContent={"space-between"} my={1}>
+          <Flex justifyContent={"space-between"} mt={1}>
             <Input
               type="text"
               name="ref_mp_po"
@@ -345,12 +346,13 @@ const Admin = () => {
           </Flex>
         </Flex>
         <Box w="100%" textAlign={"right"}>
-          <Button onClick={handleSubmit} mt={6} mb={4} ml="auto" w="20%">
+          <Button onClick={handleSubmit} my={6} ml="auto" w="20%">
             Add Data
           </Button>
         </Box>
       </form>
-      <Table>
+      <Text fontSize="32px">All loads data:</Text>
+      <Table mt={4} mb={12}>
         <Thead>
           <Tr>
             <Th>Email</Th>
