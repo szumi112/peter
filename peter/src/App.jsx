@@ -6,18 +6,21 @@ import Dashboard from "./dashboard/dashbord";
 import { database } from "./firebase-config/firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
 import LoginPlease from "./not-found/login-please";
-import ColorModeSwitch from "./color-mode/color-mode-switch";
 import Admin from "./admin/admin";
+import { useUser } from "./user-context";
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const { userInfo, setUserInfo } = useUser();
 
   useEffect(() => {
     onAuthStateChanged(database, (user) => {
       if (user) {
         setIsAuth(true);
+        setUserInfo(user.email);
       } else {
         setIsAuth(false);
+        setUserInfo(null);
       }
     });
   }, []);
@@ -25,9 +28,6 @@ function App() {
   return (
     <Box>
       <Box p={4}>
-        <Box mb={4} display="flex" justifyContent="flex-end">
-          <ColorModeSwitch />
-        </Box>
         <Routes>
           <Route path="/" element={<LoginSignUp setIsAuth={setIsAuth} />} />
           {isAuth ? (
@@ -35,7 +35,7 @@ function App() {
           ) : (
             <Route path="/dashboard" element={<LoginPlease />} />
           )}
-          {isAuth ? (
+          {isAuth && userInfo == "test1@test1.com" ? (
             <Route path="/admin" element={<Admin />} />
           ) : (
             <Route path="/admin" element={<LoginPlease />} />

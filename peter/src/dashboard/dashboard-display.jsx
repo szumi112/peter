@@ -19,71 +19,212 @@ import {
   ModalBody,
   Textarea,
   ModalFooter,
+  FormControl,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 
-// import loadsData from "./data";
 import "./table.css";
 
 import { db } from "../firebase-config/firebase-config";
-import { collection, getDocs, updateDoc, doc } from "@firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  updateDoc,
+  doc,
+} from "@firebase/firestore";
 
-const possibleStatusColors = [
-  "green.400",
-  "green.400",
-  "green.400",
-  "green.400",
-];
-
-const getRandomColor = () => {
-  const randomIndex = Math.floor(Math.random() * possibleStatusColors.length);
-  return possibleStatusColors[randomIndex];
+const statusColors = {
+  1: "green.400",
+  2: "cyan.400",
+  3: "orange.500",
+  4: "blue.400",
 };
 
 const DashboardDisplay = () => {
   const { colorMode } = useColorMode();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openModalId, setOpenModalId] = useState(null);
   const [userMessage, setUserMessage] = useState("");
   const [loads, setLoads] = useState([]);
+  const [loadModals, setLoadModals] = useState({});
   const loadsCollectionRef = collection(db, "loads");
   const isMobile = window.innerWidth <= 1100;
 
-  const updateLoad = async (id, note) => {
-    const loadDoc = doc(db, "loads", id);
-    const newFields = {
-      note: note,
-    };
-    await updateDoc(loadDoc, newFields);
-    updateLoad();
+  const [searchCity, setSearchCity] = useState("");
+  const [searchMPPo, setSearchMPPo] = useState("");
+  const [searchReference, setSearchReference] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [filteredLoads, setFilteredLoads] = useState([]);
+
+  const [sortBy, setSortBy] = useState("mostRecent");
+  useEffect(() => {
+    handleSort(sortBy);
+  }, [sortBy]);
+
+  const handleSort = (sortMethod) => {
+    const sortedLoads = [...filteredLoads];
+
+    if (sortMethod === "oldest") {
+      sortedLoads.sort((a, b) => {
+        const dateA = new Date(a.formData.collection_date);
+        const dateB = new Date(b.formData.collection_date);
+        console.log("Sorting oldest:", dateA, dateB);
+        return dateA - dateB;
+      });
+    } else if (sortMethod === "mostRecent") {
+      sortedLoads.sort((a, b) => {
+        const dateA = new Date(a.formData.collection_date);
+        const dateB = new Date(b.formData.collection_date);
+        console.log("Sorting mostRecent:", dateA, dateB);
+        return dateB - dateA;
+      });
+    }
+
+    setFilteredLoads(sortedLoads);
+  };
+
+  const updateLoadNotes = async (loadId, note) => {
+    try {
+      const loadDocRef = doc(db, "loads", loadId);
+      const loadDocSnapshot = await getDoc(loadDocRef);
+
+      if (loadDocSnapshot.exists()) {
+        const loadData = loadDocSnapshot.data();
+        const currentNotes = loadData.note || "";
+
+        const currentDate = new Date();
+        const formattedTimestamp = currentDate.toLocaleString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+
+        const newNote = `${formattedTimestamp}: ${note}`;
+        const updatedNotes = `${currentNotes}\n${newNote}`;
+
+        await updateDoc(loadDocRef, { note: updatedNotes });
+
+        const updatedLoadDocSnapshot = await getDoc(loadDocRef);
+        if (updatedLoadDocSnapshot.exists()) {
+          const updatedLoadData = updatedLoadDocSnapshot.data();
+          setLoads((prevLoads) =>
+            prevLoads.map((load) =>
+              load.id === loadId
+                ? { ...load, note: updatedLoadData.note }
+                : load
+            )
+          );
+        }
+
+        setUserMessage("");
+      }
+    } catch (error) {
+      console.error("Error updating load notes:", error);
+    }
   };
 
   useEffect(() => {
-    updateLoad();
-  }, [userMessage]);
+    if (userMessage) {
+      const loadIdToUpdate = Object.keys(loadModals).find(
+        (loadId) => loadModals[loadId]
+      );
+      if (loadIdToUpdate) {
+        updateLoadNotes(loadIdToUpdate, userMessage);
+      }
+    }
+  }, [userMessage, loadModals]);
 
   useEffect(() => {
     const getLoads = async () => {
       const data = await getDocs(loadsCollectionRef);
-      setLoads(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      console.log(loads);
+      const allLoads = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+
+      const filtered = allLoads.filter((load) => {
+        const cityMatch = load?.formData?.collection_city
+          ?.toLowerCase()
+          .includes(searchCity.toLowerCase());
+        const mpPoMatch = load?.formData?.ref_mp_po
+          ?.toLowerCase()
+          .includes(searchMPPo.toLowerCase());
+        const referenceMatch = load?.formData?.ref_ref
+          ?.toLowerCase()
+          .includes(searchReference.toLowerCase());
+        const statusMatch =
+          searchStatus === "" ||
+          String(load?.formData?.status) === searchStatus;
+
+        return cityMatch && mpPoMatch && referenceMatch && statusMatch;
+      });
+
+      setFilteredLoads(filtered);
     };
 
     getLoads();
-  }, []);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  }, [searchCity, searchMPPo, searchReference, searchStatus]);
 
   const handleUserMessageChange = (event) => {
     setUserMessage(event.target.value);
   };
 
+  const openModalForLoad = (loadId) => {
+    setOpenModalId(loadId);
+  };
+
+  const closeModalForLoad = () => {
+    setOpenModalId(null);
+    setUserMessage("");
+  };
+
   return (
-    <Box p={4}>
+    <Box py={4}>
+      <Box mb={4} display="flex" justifyContent="space-between">
+        <FormControl>
+          <Input
+            type="text"
+            placeholder="Search by City"
+            onChange={(e) => setSearchCity(e.target.value)}
+          />
+        </FormControl>
+        <FormControl>
+          <Input
+            type="text"
+            placeholder="Search by MP_PO"
+            onChange={(e) => setSearchMPPo(e.target.value)}
+          />
+        </FormControl>
+        <FormControl>
+          <Input
+            type="text"
+            placeholder="Search by Reference"
+            onChange={(e) => setSearchReference(e.target.value)}
+          />
+        </FormControl>
+        <FormControl>
+          <Select
+            placeholder="Search by Status"
+            onChange={(e) => setSearchStatus(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </Select>
+        </FormControl>
+        <Box mb={4} display="flex" justifyContent="space-between">
+          <Button onClick={() => setSortBy("oldest")}>Most Recent</Button>
+          <Button onClick={() => setSortBy("mostRecent")}>Oldest</Button>
+        </Box>
+      </Box>
+
+      <Text mb={8} fontSize={"21px"} fontWeight={"500"}>
+        Loads in Progress:
+      </Text>
+
       <Table>
         <Thead>
           <Tr>
@@ -99,8 +240,9 @@ const DashboardDisplay = () => {
             <Th></Th>
           </Tr>
         </Thead>
+
         <Tbody fontSize={"12px"}>
-          {loads.map((load, index) => (
+          {filteredLoads?.map((load, index) => (
             <Tr
               key={index}
               color={colorMode === "dark" ? "gray.200" : "gray.700"}
@@ -118,7 +260,7 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.formData.ref_mp_po},
+                    {load?.formData?.ref_mp_po},
                   </Text>
                 </Flex>
                 <Flex>
@@ -133,14 +275,20 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.formData.ref_ref}
+                    {load?.formData?.ref_ref}
                   </Text>
                 </Flex>
               </Td>
               <Td>
                 <Flex flexDir={"column"}>
-                  <Text color="green.400">
-                    {load.formData.status_description}
+                  <Text
+                    color={
+                      load?.formData?.status
+                        ? statusColors[load?.formData?.status] || "gray.400"
+                        : "gray.400"
+                    }
+                  >
+                    {load?.formData?.status_description}
                   </Text>
 
                   <Flex>
@@ -150,8 +298,8 @@ const DashboardDisplay = () => {
                         w="20px"
                         h="5px"
                         bg={
-                          i < load.formData.status
-                            ? getRandomColor()
+                          i + 1 <= load?.formData?.status
+                            ? statusColors[load?.formData?.status] || "gray.400"
                             : "gray.400"
                         }
                         borderRadius="20%"
@@ -176,20 +324,20 @@ const DashboardDisplay = () => {
                   mr={3}
                   fontWeight={"500"}
                 >
-                  {load.formData.collection_city}
+                  {load?.formData?.collection_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.formData.collection_street},{" "}
-                  {load.formData.collection_zip_cod}
+                  {load?.formData?.collection_street},{" "}
+                  {load?.formData?.collection_zip_code}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.formData.collection_country}
+                  {load?.formData?.collection_country}
                 </Text>
               </Td>
               <Td>
@@ -207,20 +355,20 @@ const DashboardDisplay = () => {
                   mr={3}
                   fontWeight={"500"}
                 >
-                  {load.formData.delivery_city}
+                  {load?.formData?.delivery_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.formData.delivery_street},{" "}
-                  {load.formData.delivery_zip_code}
+                  {load?.formData?.delivery_street},{" "}
+                  {load?.formData?.delivery_zip_code}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
-                  {load.formData.delivery_country}
+                  {load?.formData?.delivery_country}
                 </Text>
               </Td>
               <Td>
@@ -236,8 +384,8 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.formData.collection_date},{" "}
-                    {load.formData.collection_time}
+                    {load?.formData?.collection_date},{" "}
+                    {load?.formData?.collection_time}
                   </Text>
                 </Flex>
 
@@ -253,7 +401,8 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load.formData.delivery_date}, {load.formData.delivery_time}
+                    {load?.formData?.delivery_date},{" "}
+                    {load?.formData?.delivery_time}
                   </Text>
                 </Flex>
               </Td>
@@ -267,7 +416,7 @@ const DashboardDisplay = () => {
                     Vehicle Pallet:
                   </Text>
                 )}
-                {load.formData.vehicle_pallet.toUpperCase()}
+                {load?.formData?.vehicle_pallet.toUpperCase()}
               </Td>
               <Td>
                 <Flex>
@@ -280,18 +429,22 @@ const DashboardDisplay = () => {
                       Rate:
                     </Text>
                   )}
-                  {load.formData.rate_currency} {load.formData.rate}
+                  {load?.formData?.rate_currency} {load?.formData?.rate}
                 </Flex>
               </Td>
               <Td>
                 <Button
                   colorScheme="blue"
                   size="sm"
-                  onClick={openModal(load.id)}
+                  onClick={() => openModalForLoad(load.id)}
                 >
                   Notes
                 </Button>
-                <Modal isOpen={isModalOpen} onClose={closeModal}>
+
+                <Modal
+                  isOpen={openModalId === load.id}
+                  onClose={closeModalForLoad}
+                >
                   <ModalOverlay />
                   <ModalContent>
                     <ModalHeader>Enter Notes</ModalHeader>
@@ -305,23 +458,26 @@ const DashboardDisplay = () => {
                     </ModalBody>
                     <ModalFooter>
                       <Flex>
-                        <Button colorScheme="blue" onClick={closeModal} mr={2}>
+                        <Button
+                          colorScheme="blue"
+                          onClick={() => closeModalForLoad(load.id)}
+                          mr={2}
+                        >
                           Close
                         </Button>
                         <Button
                           colorScheme="green"
-                          onClick={(e) => {
-                            closeModal();
-                            updateLoad(load.id, userMessage);
+                          onClick={() => {
+                            // closeModalForLoad(load.id);
+                            updateLoadNotes(load?.id, userMessage);
                           }}
                         >
-                          {/* {load.id} */}
                           Save
                         </Button>
                       </Flex>
                     </ModalFooter>
                     <Flex px={6} pb={6}>
-                      {load.note}
+                      <Text whiteSpace="pre-line">{load?.note}</Text>
                     </Flex>
                   </ModalContent>
                 </Modal>

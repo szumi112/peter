@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   FormControl,
@@ -9,6 +9,7 @@ import {
   Image,
   Text,
   useColorMode,
+  Flex,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,16 +20,26 @@ import {
 } from "firebase/auth";
 
 import { isValidEmail } from "./modules/email-validation";
+import ColorModeSwitch from "../color-mode/color-mode-switch";
+
+import { useUser } from "../user-context";
 
 import logo from "../assets/kcharles.svg";
 
 const LoginSignUp = () => {
+  const { userInfo } = useUser();
   const navigate = useNavigate();
   const { colorMode } = useColorMode();
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
 
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/dashboard");
+    }
+  }, [userInfo]);
 
   const handleLogin = () => {
     if (!isValidEmail(loginData.email)) {
@@ -82,6 +93,10 @@ const LoginSignUp = () => {
 
   return (
     <>
+      <Flex justifyContent="right">
+        <ColorModeSwitch />
+      </Flex>
+
       <Image src={logo} mx="auto" mt={"25px"} mb={"10px"} />
       <Box
         mx="auto"
@@ -178,9 +193,9 @@ const LoginSignUp = () => {
             {loginErrorMessage}
           </Text>
 
-          <Text fontSize="sm" color="blue.500" cursor="pointer">
+          {/* <Text fontSize="sm" color="blue.500" cursor="pointer">
             Forgot your password?
-          </Text>
+          </Text> */}
 
           <Button
             colorScheme="green"
