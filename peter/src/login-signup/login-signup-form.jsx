@@ -142,10 +142,25 @@ const LoginSignUp = () => {
                     onChange={(e) =>
                       setLoginData({ ...loginData, password: e.target.value })
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleLogin();
+                      }
+                    }}
                   />
                 </FormControl>
               </Box>
-              <Button colorScheme="blue" onClick={handleLogin} w="100%" mt={4}>
+              <Button
+                colorScheme="blue"
+                onClick={handleLogin}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
+                w="100%"
+                mt={4}
+              >
                 Login
               </Button>
             </>
@@ -181,6 +196,11 @@ const LoginSignUp = () => {
               <Button
                 colorScheme="blue"
                 onClick={handleRegistration}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleRegistration();
+                  }
+                }}
                 w="100%"
                 mt={4}
               >

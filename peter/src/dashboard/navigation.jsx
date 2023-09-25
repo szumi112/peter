@@ -45,7 +45,13 @@ const Navigation = () => {
         alignItems={"center"}
         flexDir={{ base: "column", md: "row" }}
       >
-        <Image src={logo} mt={"25px"} mb={"10px"} />
+        <Image
+          src={logo}
+          mt={"25px"}
+          mb={"10px"}
+          cursor="pointer"
+          onClick={() => navigate("/")}
+        />
         <IconButton
           aria-label="Open mobile menu"
           icon={<HamburgerIcon />}
