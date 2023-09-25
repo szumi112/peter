@@ -261,20 +261,30 @@ const DashboardDisplay = () => {
       >
         Your Loads:
       </Text>
-
+      {filteredLoads.length == 0 ? (
+        <Text textAlign={"center"} fontWeight={"500"} fontSize={"18px"} mb={12}>
+          No loads!
+        </Text>
+      ) : (
+        <></>
+      )}
       <Table>
-        <Thead>
-          <Tr>
-            <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
-            <Th className="table-responsive-sizes-text">Status</Th>
-            <Th className="table-responsive-sizes-text">Collection</Th>
-            <Th className="table-responsive-sizes-text">Delivery</Th>
-            <Th className="table-responsive-sizes-text">Dates</Th>
-            <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
-            <Th className="table-responsive-sizes-text">Rate</Th>
-            <Th className="table-responsive-sizes-text"></Th>
-          </Tr>
-        </Thead>
+        {filteredLoads.length != 0 && (
+          <>
+            <Thead>
+              <Tr>
+                <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
+                <Th className="table-responsive-sizes-text">Status</Th>
+                <Th className="table-responsive-sizes-text">Collection</Th>
+                <Th className="table-responsive-sizes-text">Delivery</Th>
+                <Th className="table-responsive-sizes-text">Dates</Th>
+                <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
+                <Th className="table-responsive-sizes-text">Rate</Th>
+                <Th className="table-responsive-sizes-text"></Th>
+              </Tr>
+            </Thead>
+          </>
+        )}
 
         <Tbody className="table-responsive-sizes-text">
           {filteredLoads?.map((load, index) => (

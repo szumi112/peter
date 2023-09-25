@@ -244,11 +244,17 @@ const Admin = () => {
     <Box p={4}>
       <Navigation />
 
-      <Flex justifyContent={"space-between"} alignItems={"center"} mb={10}>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        mb={10}
+        flexDir={{ base: "column", md: "row" }}
+      >
         <Button
           onClick={() => navigate("/dashboard")}
           variant={"link"}
           _hover={{ color: "blue.300" }}
+          mb={{ base: 8, md: 0 }}
         >
           {"\u{1F868}"} Back to dashboard
         </Button>

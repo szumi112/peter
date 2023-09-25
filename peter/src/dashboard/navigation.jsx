@@ -1,20 +1,33 @@
-import { Box, Button, Flex, Image, Text, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Text,
+  useColorMode,
+  IconButton,
+  VStack,
+  Collapse,
+} from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
 import { database } from "../firebase-config/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../user-context";
 import { useMatch } from "react-router-dom";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import logo from "../assets/kcharles.svg";
 import white_phone from "../assets/phone_icon_white.png";
 import phone from "../assets/phone_icon.png";
 import white_email from "../assets/email_icon_white.png";
 import email from "../assets/email_icon.png";
 import ColorModeSwitch from "../color-mode/color-mode-switch";
+import { useState } from "react";
 
 const Navigation = () => {
   const { colorMode } = useColorMode();
   const { userInfo } = useUser();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleClick = () => {
     signOut(database).then(navigate("/"));
   };
@@ -33,27 +46,88 @@ const Navigation = () => {
         flexDir={{ base: "column", md: "row" }}
       >
         <Image src={logo} mt={"25px"} mb={"10px"} />
-        <Flex alignItems={"center"} my={{ base: 8, md: 0 }}>
-          <Image
-            src={colorMode == "dark" ? white_email : email}
-            w="20px"
-            h="18px"
-            mr={4}
-          />
-          <Text mr={12}>peter@kcharles.co.uk</Text>
-          <Image
-            src={colorMode == "dark" ? white_phone : phone}
-            w="20px"
-            h="18px"
-            mr={4}
-          />
-          <Text>+ 44 7803 493241</Text>
+        <IconButton
+          aria-label="Open mobile menu"
+          icon={<HamburgerIcon />}
+          display={{ base: "block", md: "none" }}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          variant="ghost"
+        />
+        <Collapse
+          in={mobileMenuOpen}
+          animateOpacity
+          display={{ base: "block", md: "none" }}
+        >
+          <VStack
+            spacing={4}
+            alignItems="center"
+            mt={4}
+            pb={4}
+            display={{ base: "flex", md: "none" }}
+            borderBottom="1px solid"
+            borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}
+          >
+            {isAdminRoute && (
+              <Text fontSize={"32px"} fontWeight="bold">
+                Admin Panel
+              </Text>
+            )}
+
+            {[
+              "test1@test1.com",
+              "suzanna.k@kcharles.co.uk",
+              "peter@kcharles.co.uk",
+            ].includes(userInfo) &&
+              !isAdminRoute && (
+                <Button
+                  onClick={() => navigate("/admin")}
+                  colorScheme="red"
+                  bg={colorMode === "dark" ? "red.400" : "red.400"}
+                >
+                  Admin Panel
+                </Button>
+              )}
+
+            <Button onClick={handleClick}>Log out</Button>
+            <ColorModeSwitch />
+          </VStack>
+        </Collapse>
+        <Flex
+          alignItems={"center"}
+          my={{ base: 8, md: 0 }}
+          flexDir={{ base: "column", md: "row" }}
+        >
+          <Flex alignItems={"center"} m={2}>
+            <Image
+              src={colorMode == "dark" ? white_email : email}
+              w="20px"
+              h="18px"
+              mr={4}
+            />
+            <Text>peter@kcharles.co.uk</Text>
+          </Flex>
+          <Flex alignItems={"center"} m={2}>
+            <Image
+              src={colorMode == "dark" ? white_phone : phone}
+              w="20px"
+              h="18px"
+              mx={4}
+            />
+            <Text>+ 44 7803 493241</Text>
+          </Flex>
         </Flex>
-        <ColorModeSwitch />
+        <Box display={{ base: "none", md: "flex" }}>
+          <ColorModeSwitch />
+        </Box>
       </Flex>
-      <Flex justifyContent={"space-between"} alignItems={"center"} mt={8}>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        mt={{ base: 0, md: 8 }}
+        flexDir={{ base: "column-reverse", md: "row" }}
+      >
         {!isAdminRoute ? (
-          <Text fontSize={"32px"} fontWeight="bold">
+          <Text fontSize={"32px"} fontWeight="bold" my={{ base: 2, md: 0 }}>
             Metaplast Dashboard
           </Text>
         ) : (
@@ -62,17 +136,22 @@ const Navigation = () => {
           </Text>
         )}
 
-        <Flex>
-          {userInfo == "test1@test1.com" && !isAdminRoute && (
-            <Button
-              onClick={() => navigate("/admin")}
-              mr={8}
-              colorScheme="red"
-              bg={colorMode === "dark" ? "red.400" : "red.400"}
-            >
-              Admin Panel
-            </Button>
-          )}
+        <Flex mb={4} display={{ base: "none", md: "flex" }}>
+          {[
+            "test1@test1.com",
+            "suzanna.k@kcharles.co.uk",
+            "peter@kcharles.co.uk",
+          ].includes(userInfo) &&
+            !isAdminRoute && (
+              <Button
+                onClick={() => navigate("/admin")}
+                mr={8}
+                colorScheme="red"
+                bg={colorMode === "dark" ? "red.400" : "red.400"}
+              >
+                Admin Panel
+              </Button>
+            )}
 
           <Button onClick={handleClick}>Log out</Button>
         </Flex>
