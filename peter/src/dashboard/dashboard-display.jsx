@@ -492,7 +492,10 @@ const DashboardDisplay = () => {
                       Rate:
                     </Text>
                   )}
-                  {load?.formData?.rate_currency} {load?.formData?.rate}
+                  <Flex>
+                    {load?.formData?.rate_currency}
+                    {load?.formData?.rate}
+                  </Flex>
                 </Flex>
               </Td>
               <Td>
@@ -500,6 +503,8 @@ const DashboardDisplay = () => {
                   colorScheme="blue"
                   size={{ base: "sm", "2xl": "lg" }}
                   onClick={() => openModalForLoad(load.id)}
+                  w={{ base: "100%", md: "inherit" }}
+                  mt={2}
                 >
                   Notes
                 </Button>

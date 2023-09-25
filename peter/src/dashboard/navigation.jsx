@@ -66,31 +66,39 @@ const Navigation = () => {
             variant="ghost"
           />
         </Flex>
+        {!isAdminRoute && (
+          <Flex
+            alignItems={"center"}
+            my={{ base: 0, md: 0 }}
+            flexDir={{ base: "column", sm: "row" }}
+          >
+            <Flex alignItems={"center"} m={2}>
+              <Image
+                src={colorMode == "dark" ? white_email : email}
+                w="20px"
+                h="18px"
+                mr={4}
+                opacity={"50%"}
+              />
 
-        <Flex
-          alignItems={"center"}
-          my={{ base: 0, md: 0 }}
-          flexDir={{ base: "column", sm: "row" }}
-        >
-          <Flex alignItems={"center"} m={2}>
-            <Image
-              src={colorMode == "dark" ? white_email : email}
-              w="20px"
-              h="18px"
-              mr={4}
-            />
-            <Text>peter@kcharles.co.uk</Text>
+              <Text color={colorMode == "dark" ? "gray.300" : "gray.600"}>
+                peter@kcharles.co.uk
+              </Text>
+            </Flex>
+            <Flex alignItems={"center"} m={2}>
+              <Image
+                src={colorMode == "dark" ? white_phone : phone}
+                w="20px"
+                h="18px"
+                mx={4}
+                opacity={"50%"}
+              />
+              <Text color={colorMode == "dark" ? "gray.300" : "gray.600"}>
+                + 44 7803 493241
+              </Text>
+            </Flex>
           </Flex>
-          <Flex alignItems={"center"} m={2}>
-            <Image
-              src={colorMode == "dark" ? white_phone : phone}
-              w="20px"
-              h="18px"
-              mx={4}
-            />
-            <Text>+ 44 7803 493241</Text>
-          </Flex>
-        </Flex>
+        )}
         <Box display={{ base: "none", md: "flex" }}>
           <ColorModeSwitch />
         </Box>
@@ -126,12 +134,24 @@ const Navigation = () => {
                 onClick={() => navigate("/admin")}
                 colorScheme="red"
                 bg={colorMode === "dark" ? "red.400" : "red.400"}
+                w={"100%"}
               >
                 Admin Panel
               </Button>
             )}
+          {isAdminRoute && (
+            <Button
+              onClick={() => navigate("/dashboard")}
+              mr={{ base: 0, md: 4 }}
+              w={"100%"}
+            >
+              Dashboard
+            </Button>
+          )}
 
-          <Button onClick={handleClick}>Log out</Button>
+          <Button onClick={handleClick} w={"100%"}>
+            Log out
+          </Button>
           <ColorModeSwitch />
         </VStack>
       </Collapse>
@@ -167,7 +187,14 @@ const Navigation = () => {
                 Admin Panel
               </Button>
             )}
-
+          {isAdminRoute && (
+            <Button
+              onClick={() => navigate("/dashboard")}
+              mr={{ base: 0, md: 4 }}
+            >
+              Dashboard
+            </Button>
+          )}
           <Button onClick={handleClick}>Log out</Button>
         </Flex>
       </Flex>

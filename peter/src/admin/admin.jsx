@@ -250,18 +250,18 @@ const Admin = () => {
 
       <Flex
         justifyContent={"space-between"}
-        alignItems={"center"}
-        mb={10}
+        alignItems={"left"}
+        mb={5}
         flexDir={{ base: "column", md: "row" }}
       >
-        <Button
+        {/* <Button
           onClick={() => navigate("/dashboard")}
           variant={"link"}
           _hover={{ color: "blue.300" }}
           mb={{ base: 8, md: 0 }}
         >
           ⬅️ Back to dashboard
-        </Button>
+        </Button> */}
         <Button onClick={toggleForm} colorScheme={"blue"}>
           {showForm ? "➖ Hide Form" : "➕ Add a new load"}
         </Button>
@@ -536,7 +536,11 @@ const Admin = () => {
           </Box>
         </form>
       )}
-      <Button onClick={() => setShowFilters(!showFilters)} mb={4}>
+      <Button
+        onClick={() => setShowFilters(!showFilters)}
+        mb={8}
+        w={{ base: "100%", md: "inherit" }}
+      >
         {showFilters ? "Hide Filters" : "Show Filters"}
       </Button>
 
@@ -616,7 +620,13 @@ const Admin = () => {
             <Th className="table-responsive-sizes-text">ETA</Th>
             <Th className="table-responsive-sizes-text">Vehicle Type</Th>
             <Th className="table-responsive-sizes-text">Rate</Th>
-            <Th className="table-responsive-sizes-text">Actions</Th>
+            <Th
+              className="table-responsive-sizes-text"
+              textAlign={"center"}
+              w={{ base: "100%", md: "50px" }}
+            >
+              Actions
+            </Th>
           </Tr>
         </Thead>
         <Tbody className="table-responsive-sizes-text">
@@ -1052,7 +1062,10 @@ const Admin = () => {
                       />
                     </>
                   ) : (
-                    `${load?.formData?.rate_currency} ${load?.formData?.rate}`
+                    <Flex alignItems={"center"}>
+                      {load?.formData?.rate_currency}
+                      {load?.formData?.rate}
+                    </Flex>
                   )}
                 </Td>
 
@@ -1063,8 +1076,9 @@ const Admin = () => {
                       colorScheme="teal"
                       onClick={() => saveEdits(load.id)}
                       mr={4}
+                      w={{ base: "100%", md: "inherit" }}
                     >
-                      Save
+                      ✔️ Save
                     </Button>
                   ) : (
                     <Button
@@ -1072,7 +1086,10 @@ const Admin = () => {
                       size={{ base: "sm", "2xl": "lg" }}
                       colorScheme="teal"
                       mr={4}
+                      w={"100%"}
                       onClick={() => toggleEdit(load.id)}
+                      variant="ghost"
+                      textAlign={"center"}
                     >
                       ✏ Edit
                     </Button>
@@ -1081,10 +1098,12 @@ const Admin = () => {
                     my={2}
                     size={{ base: "sm", "2xl": "lg" }}
                     colorScheme="red"
-                    bg={colorMode === "dark" ? "red.500" : "red.500"}
+                    // bg={colorMode === "dark" ? "red.500" : "red.500"}
+                    w={"100%"}
                     onClick={() => {
                       openDeleteModal(load?.id);
                     }}
+                    variant="ghost"
                   >
                     🗑️ Delete
                   </Button>
@@ -1105,8 +1124,10 @@ const Admin = () => {
                         size={{ base: "sm", "2xl": "lg" }}
                         fontWeight={"500"}
                         onClick={() => setShowNotes(!showNotes)}
+                        w={"100%"}
+                        variant="ghost"
                       >
-                        Show notes
+                        {!showNotes ? "Show notes" : "Hide Notes"}
                       </Button>
                       {showNotes && (
                         <Text>
