@@ -279,7 +279,7 @@ const DashboardDisplay = () => {
                 <Th className="table-responsive-sizes-text">Status</Th>
                 <Th className="table-responsive-sizes-text">Collection</Th>
                 <Th className="table-responsive-sizes-text">Delivery</Th>
-                <Th className="table-responsive-sizes-text">Dates</Th>
+                <Th className="table-responsive-sizes-text">ETA</Th>
                 <Th className="table-responsive-sizes-text">Vehicle Type</Th>
                 <Th className="table-responsive-sizes-text">Rate</Th>
                 <Th className="table-responsive-sizes-text"></Th>
@@ -458,46 +458,29 @@ const DashboardDisplay = () => {
                     fontWeight={"500"}
                     mb={4}
                   >
-                    Collection:
+                    ETA:
                   </Text>
                   <Text
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load?.formData?.collection_date},{" "}
-                    {load?.formData?.collection_time}
-                  </Text>
-                </Flex>
-
-                <Flex>
-                  <Text
-                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
-                    mr={3}
-                    fontWeight={"500"}
-                  >
-                    Delivery:
-                  </Text>
-                  <Text
-                    color={colorMode === "dark" ? "gray.400" : "gray.500"}
-                    fontWeight={"400"}
-                  >
-                    {load?.formData?.delivery_date},{" "}
-                    {load?.formData?.delivery_time}
+                    {load?.formData?.eta}
                   </Text>
                 </Flex>
               </Td>
               <Td>
-                {isMobile && (
-                  <Text
-                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
-                    mr={3}
-                    mb={2}
-                    fontWeight={"500"}
-                  >
-                    Vehicle Type:
-                  </Text>
-                )}
-                {load?.formData?.vehicle_type.toUpperCase()}
+                <Flex alignItems={"center"}>
+                  {isMobile && (
+                    <Text
+                      color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                      mr={3}
+                      fontWeight={"500"}
+                    >
+                      Vehicle Type:
+                    </Text>
+                  )}
+                  {load?.formData?.vehicle_type.toUpperCase()}
+                </Flex>
               </Td>
               <Td>
                 <Flex>

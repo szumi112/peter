@@ -35,7 +35,7 @@ const Admin = () => {
   const isMobile = window.innerWidth <= 1100;
   const navigate = useNavigate();
   const [loads, setLoads] = useState([]);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [searchCity, setSearchCity] = useState("");
@@ -83,6 +83,7 @@ const Admin = () => {
     vehicle_type: "",
     rate: "",
     rate_currency: "",
+    eta: "",
   });
 
   const handleChange = async (e) => {
@@ -156,6 +157,7 @@ const Admin = () => {
       vehicle_type: "",
       rate: "",
       rate_currency: "",
+      eta: "",
     });
   };
 
@@ -510,6 +512,15 @@ const Admin = () => {
                 w={{ base: "100%", md: "45%" }}
               />
             </Flex>
+            <Input
+              type="text"
+              name="eta"
+              placeholder="ETA"
+              value={formData.eta}
+              onChange={handleChange}
+              w={{ base: "100%", md: "45%" }}
+              mt={1}
+            />
           </Flex>
           <Box w="100%" textAlign={"right"}>
             <Button
@@ -601,7 +612,7 @@ const Admin = () => {
             <Th className="table-responsive-sizes-text">Status</Th>
             <Th className="table-responsive-sizes-text">Collection</Th>
             <Th className="table-responsive-sizes-text">Delivery</Th>
-            <Th className="table-responsive-sizes-text">Dates</Th>
+            <Th className="table-responsive-sizes-text">ETA</Th>
             <Th className="table-responsive-sizes-text">Vehicle Type</Th>
             <Th className="table-responsive-sizes-text">Rate</Th>
             <Th className="table-responsive-sizes-text">Actions</Th>
@@ -813,9 +824,13 @@ const Admin = () => {
                         {load?.formData?.collection_city}
                       </Text>
                       <Text my={4}>{load?.formData?.collection_street}</Text>
-                      <Text>
+                      <Text mb={4}>
                         {load?.formData?.collection_zip_code},{" "}
                         {load?.formData?.collection_country}
+                      </Text>
+                      <Text color="white" fontWeight={"500"}>
+                        {load?.formData?.collection_date},
+                        {load?.formData?.collection_time}
                       </Text>
                     </>
                   )}
@@ -895,9 +910,13 @@ const Admin = () => {
                       )}
                       <Text mb={3}>{load?.formData?.delivery_city}</Text>
                       <Text my={4}>{load?.formData?.delivery_street}</Text>
-                      <Text>
+                      <Text my={4}>
                         {load?.formData?.delivery_zip_code},{" "}
                         {load?.formData?.delivery_country}
+                      </Text>
+                      <Text color="white" fontWeight={"500"}>
+                        {load?.formData?.collection_date},
+                        {load?.formData?.collection_time}
                       </Text>
                     </>
                   )}
@@ -948,26 +967,30 @@ const Admin = () => {
                         value={load?.formData?.delivery_time}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        ETA:
+                      </Text>
+                      <Input
+                        type="text"
+                        name="eta"
+                        placeholder="ETA"
+                        value={load?.formData?.eta}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
                     </>
                   ) : (
                     <>
-                      <Text mb={3}>
+                      <Text>
                         <span
                           style={{ fontWeight: "500", marginRight: "10px" }}
                         >
-                          Collection:
+                          ETA:
                         </span>
-                        {load?.formData?.collection_date},{" "}
-                        {load?.formData?.collection_time}
-                      </Text>
-                      <Text mb={3}>
-                        <span
-                          style={{ fontWeight: "500", marginRight: "10px" }}
-                        >
-                          Delivery:
-                        </span>
-                        {load?.formData?.delivery_date},{" "}
-                        {load?.formData?.delivery_time}
+                        {load?.formData?.eta}
                       </Text>
                     </>
                   )}
