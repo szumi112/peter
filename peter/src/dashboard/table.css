@@ -50,12 +50,12 @@ thead th {
 }
 
 .table-responsive-sizes-text {
-  font-size: 21px !important;
+  font-size: 20px !important;
 }
 
 @media screen and (max-width: 3000px) {
   .table-responsive-sizes-text {
-    font-size: 21px !important;
+    font-size: 20px !important;
   }
 }
 

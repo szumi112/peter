@@ -27,6 +27,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import Navigation from "../dashboard/navigation";
+import DeleteConfirmationModal from "./delete-modal";
 
 const Admin = () => {
   const { colorMode } = useColorMode();
@@ -42,6 +43,18 @@ const Admin = () => {
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("mostRecent");
   const [loadAdded, setLoadAdded] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [loadToDelete, setLoadToDelete] = useState(null);
+
+  const openDeleteModal = (loadId) => {
+    setLoadToDelete(loadId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setLoadToDelete(null);
+  };
 
   const toggleForm = () => {
     setShowForm(!showForm);
@@ -454,7 +467,13 @@ const Admin = () => {
             </Flex>
           </Flex>
           <Box w="100%" textAlign={"right"}>
-            <Button onClick={handleSubmit} my={6} ml="auto" w="20%">
+            <Button
+              onClick={handleSubmit}
+              my={6}
+              ml="auto"
+              w="20%"
+              colorScheme="green"
+            >
               Add Load
             </Button>
           </Box>
@@ -635,6 +654,7 @@ const Admin = () => {
                         value={load?.formData?.collection_city}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+
                       <Input
                         type="text"
                         name="collection_street"
@@ -824,6 +844,7 @@ const Admin = () => {
                     </Button>
                   ) : (
                     <Button
+                      my={2}
                       size={{ base: "sm", "2xl": "lg" }}
                       colorScheme="teal"
                       mr={4}
@@ -833,15 +854,27 @@ const Admin = () => {
                     </Button>
                   )}
                   <Button
+                    my={2}
                     size={{ base: "sm", "2xl": "lg" }}
                     colorScheme="red"
                     bg={colorMode === "dark" ? "red.500" : "red.500"}
                     onClick={() => {
-                      deleteLoad(load?.id);
+                      openDeleteModal(load?.id);
                     }}
                   >
                     🗑️ Delete
                   </Button>
+                  <DeleteConfirmationModal
+                    isOpen={loadToDelete !== null}
+                    onClose={closeDeleteModal}
+                    onDelete={() => {
+                      if (loadToDelete) {
+                        deleteLoad(loadToDelete);
+                      }
+                      closeDeleteModal();
+                    }}
+                  />
+
                   {load?.note && (
                     <Box mt={3}>
                       <Button
