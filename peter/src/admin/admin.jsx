@@ -590,13 +590,13 @@ const Admin = () => {
               height={{ base: "40px", "2xl": "50px" }}
               mx={2}
             >
-              Most Recent
+              Upcoming
             </Button>
             <Button
               onClick={() => setSortBy("mostRecent")}
               height={{ base: "40px", "2xl": "50px" }}
             >
-              Oldest
+              Future Dated
             </Button>
           </Box>
         </Box>

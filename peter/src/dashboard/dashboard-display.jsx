@@ -220,7 +220,7 @@ const DashboardDisplay = () => {
           <Input
             height={{ base: "40px", "2xl": "50px" }}
             type="text"
-            placeholder="Search by MP_PO"
+            placeholder="Search by MP PO"
             onChange={(e) => setSearchMPPo(e.target.value)}
           />
         </FormControl>
@@ -243,13 +243,13 @@ const DashboardDisplay = () => {
             mx={2}
             height={{ base: "40px", "2xl": "50px" }}
           >
-            Most Recent
+            Upcoming
           </Button>
           <Button
             onClick={() => setSortBy("mostRecent")}
             height={{ base: "40px", "2xl": "50px" }}
           >
-            Oldest
+            Future Dated
           </Button>
         </Box>
       </Flex>
