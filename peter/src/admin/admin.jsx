@@ -725,8 +725,10 @@ const Admin = () => {
                     </>
                   ) : (
                     <>
-                      <Text mb={3}>{load?.formData?.status}/4</Text>
-                      <Text>{load?.formData?.status_description}</Text>
+                      <Text>
+                        {load?.formData?.status}/4{" "}
+                        {load?.formData?.status_description}
+                      </Text>
                     </>
                   )}
                 </Td>
