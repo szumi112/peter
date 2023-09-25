@@ -479,7 +479,7 @@ const Admin = () => {
               />
               <Input
                 type="text"
-                name="Vehicle Type"
+                name="vehicle_type"
                 placeholder="Vehicle Type"
                 value={formData.vehicle_type}
                 onChange={handleChange}
