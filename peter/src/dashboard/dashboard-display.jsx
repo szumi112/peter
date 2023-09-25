@@ -456,7 +456,6 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
                     fontWeight={"500"}
-                    mb={4}
                   >
                     ETA:
                   </Text>
