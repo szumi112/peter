@@ -308,7 +308,7 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load?.formData?.ref_mp_po},
+                    {load?.formData?.ref_mp_po}
                   </Text>
                 </Flex>
                 <Flex>
