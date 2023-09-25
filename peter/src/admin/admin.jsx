@@ -80,7 +80,7 @@ const Admin = () => {
     delivery_date: "",
     collection_time: "",
     delivery_time: "",
-    vehicle_pallet: "",
+    vehicle_type: "",
     rate: "",
     rate_currency: "",
   });
@@ -153,7 +153,7 @@ const Admin = () => {
       delivery_date: "",
       collection_time: "",
       delivery_time: "",
-      vehicle_pallet: "",
+      vehicle_type: "",
       rate: "",
       rate_currency: "",
     });
@@ -293,7 +293,7 @@ const Admin = () => {
               <Input
                 type="text"
                 name="ref_ref"
-                placeholder="Reference"
+                placeholder="Col. Reference"
                 value={formData.ref_ref}
                 onChange={handleChange}
                 w={{ base: "100%", md: "45%" }}
@@ -309,7 +309,7 @@ const Admin = () => {
                 placeholder="Delivery Step"
                 value={formData.status.number}
                 onChange={handleChange}
-                w={{ base: "100%", md: "45%" }}
+                w={{ base: "100%", md: "15%" }}
                 mr={0}
               >
                 <option value="1">1</option>
@@ -322,7 +322,7 @@ const Admin = () => {
                 placeholder="Delivery Status"
                 value={formData.status_description}
                 onChange={handleChange}
-                w={{ base: "100%", md: "45%" }}
+                w={{ base: "100%", md: "20%" }}
               >
                 <option value="Confirmed">Confirmed</option>
                 <option value="Booking">Booking</option>
@@ -479,9 +479,9 @@ const Admin = () => {
               />
               <Input
                 type="text"
-                name="vehicle_pallet"
-                placeholder="Vehicle Pallet"
-                value={formData.vehicle_pallet}
+                name="Vehicle Type"
+                placeholder="Vehicle Type"
+                value={formData.vehicle_type}
                 onChange={handleChange}
                 w={{ base: "100%", md: "45%" }}
               />
@@ -568,7 +568,7 @@ const Admin = () => {
             <Input
               height={{ base: "40px", "2xl": "50px" }}
               type="text"
-              placeholder="Search by Reference"
+              placeholder="Search by Col. Reference"
               onChange={(e) => setSearchReference(e.target.value)}
             />
           </FormControl>
@@ -595,12 +595,14 @@ const Admin = () => {
         <Thead>
           <Tr>
             <Th className="table-responsive-sizes-text">Email</Th>
-            <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
+            <Th className="table-responsive-sizes-text">
+              MP PO/Col. Reference
+            </Th>
             <Th className="table-responsive-sizes-text">Status</Th>
             <Th className="table-responsive-sizes-text">Collection</Th>
             <Th className="table-responsive-sizes-text">Delivery</Th>
             <Th className="table-responsive-sizes-text">Dates</Th>
-            <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
+            <Th className="table-responsive-sizes-text">Vehicle Type</Th>
             <Th className="table-responsive-sizes-text">Rate</Th>
             <Th className="table-responsive-sizes-text">Actions</Th>
           </Tr>
@@ -652,12 +654,12 @@ const Admin = () => {
                         my={4}
                         className={editingLoads[load.id] ? "editTableName" : ""}
                       >
-                        Reference:
+                        Col. Reference:
                       </Text>
                       <Input
                         type="text"
                         name="ref_ref"
-                        placeholder="Reference"
+                        placeholder="Col. Reference"
                         value={load?.formData?.ref_ref}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
@@ -669,7 +671,9 @@ const Admin = () => {
                         {load?.formData?.ref_mp_po}{" "}
                       </Text>
                       <Text>
-                        <span style={{ fontWeight: "500" }}>References:</span>{" "}
+                        <span style={{ fontWeight: "500" }}>
+                          Col. Reference:
+                        </span>{" "}
                         {load?.formData?.ref_ref}
                       </Text>
                     </>
@@ -977,18 +981,18 @@ const Admin = () => {
                         my={4}
                         className={editingLoads[load.id] ? "editTableName" : ""}
                       >
-                        Vehicle Pallet:
+                        Vehicle Type:
                       </Text>
                       <Input
                         type="text"
-                        name="vehicle_pallet"
-                        placeholder="Vehicle Pallet"
-                        value={load?.formData?.vehicle_pallet}
+                        name="vehicle_type"
+                        placeholder="Vehicle Type"
+                        value={load?.formData?.vehicle_type}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
                     </>
                   ) : (
-                    load?.formData?.vehicle_pallet.toUpperCase()
+                    load?.formData?.vehicle_type?.toUpperCase()
                   )}
                 </Td>
                 <Td>

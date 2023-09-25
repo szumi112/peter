@@ -228,7 +228,7 @@ const DashboardDisplay = () => {
           <Input
             height={{ base: "40px", "2xl": "50px" }}
             type="text"
-            placeholder="Search by Reference"
+            placeholder="Search by Col. Reference"
             onChange={(e) => setSearchReference(e.target.value)}
           />
         </FormControl>
@@ -273,12 +273,14 @@ const DashboardDisplay = () => {
           <>
             <Thead>
               <Tr>
-                <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
+                <Th className="table-responsive-sizes-text">
+                  MP PO/Col. Reference
+                </Th>
                 <Th className="table-responsive-sizes-text">Status</Th>
                 <Th className="table-responsive-sizes-text">Collection</Th>
                 <Th className="table-responsive-sizes-text">Delivery</Th>
                 <Th className="table-responsive-sizes-text">Dates</Th>
-                <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
+                <Th className="table-responsive-sizes-text">Vehicle Type</Th>
                 <Th className="table-responsive-sizes-text">Rate</Th>
                 <Th className="table-responsive-sizes-text"></Th>
               </Tr>
@@ -315,7 +317,7 @@ const DashboardDisplay = () => {
                     mr={3}
                     fontWeight={"500"}
                   >
-                    Reference:
+                    Col. Reference:
                   </Text>
                   <Text
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
@@ -370,8 +372,9 @@ const DashboardDisplay = () => {
                 <Text
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
-                  fontWeight={"500"}
+                  fontWeight={isMobile ? "400" : "500"}
                   mb={4}
+                  mt={isMobile ? 4 : 0}
                 >
                   {load?.formData?.collection_city}
                 </Text>
@@ -384,11 +387,22 @@ const DashboardDisplay = () => {
                   {load?.formData?.collection_zip_code}
                 </Text>
                 <Text
+                  mb={4}
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
                 >
                   {load?.formData?.collection_country}
                 </Text>
+                <Flex>
+                  <Text
+                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                    mr={3}
+                    fontWeight={"400"}
+                  >
+                    {load?.formData?.collection_date},{" "}
+                    {load?.formData?.collection_time}
+                  </Text>
+                </Flex>
               </Td>
               <Td>
                 {isMobile && (
@@ -404,8 +418,9 @@ const DashboardDisplay = () => {
                 <Text
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
-                  fontWeight={"500"}
+                  fontWeight={isMobile ? "400" : "500"}
                   mb={4}
+                  mt={isMobile ? 4 : 0}
                 >
                   {load?.formData?.delivery_city}
                 </Text>
@@ -420,9 +435,20 @@ const DashboardDisplay = () => {
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
+                  mb={4}
                 >
                   {load?.formData?.delivery_country}
                 </Text>
+                <Flex>
+                  <Text
+                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                    mr={3}
+                    fontWeight={"400"}
+                  >
+                    {load?.formData?.delivery_date},{" "}
+                    {load?.formData?.delivery_time}
+                  </Text>
+                </Flex>
               </Td>
               <Td>
                 <Flex>
@@ -468,10 +494,10 @@ const DashboardDisplay = () => {
                     mb={2}
                     fontWeight={"500"}
                   >
-                    Vehicle Pallet:
+                    Vehicle Type:
                   </Text>
                 )}
-                {load?.formData?.vehicle_pallet.toUpperCase()}
+                {load?.formData?.vehicle_type.toUpperCase()}
               </Td>
               <Td>
                 <Flex>
