@@ -361,6 +361,7 @@ const DashboardDisplay = () => {
                   <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
+                    mb={2}
                     fontWeight={"500"}
                   >
                     Collection:
@@ -394,6 +395,7 @@ const DashboardDisplay = () => {
                   <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
+                    mb={2}
                     fontWeight={"500"}
                   >
                     Delivery:
@@ -463,6 +465,7 @@ const DashboardDisplay = () => {
                   <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
+                    mb={2}
                     fontWeight={"500"}
                   >
                     Vehicle Pallet:

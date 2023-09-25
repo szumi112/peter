@@ -32,6 +32,7 @@ import DeleteConfirmationModal from "./delete-modal";
 const Admin = () => {
   const { colorMode } = useColorMode();
   const loadCollectionRef = collection(db, "loads");
+  const isMobile = window.innerWidth <= 1100;
   const navigate = useNavigate();
   const [loads, setLoads] = useState([]);
   const [data, setData] = useState([]);
@@ -45,6 +46,7 @@ const Admin = () => {
   const [loadAdded, setLoadAdded] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [loadToDelete, setLoadToDelete] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   const openDeleteModal = (loadId) => {
     setLoadToDelete(loadId);
@@ -256,7 +258,7 @@ const Admin = () => {
           _hover={{ color: "blue.300" }}
           mb={{ base: 8, md: 0 }}
         >
-          {"\u{1F868}"} Back to dashboard
+          ⬅️ Back to dashboard
         </Button>
         <Button onClick={toggleForm} colorScheme={"blue"}>
           {showForm ? "➖ Hide Form" : "➕ Add a new load"}
@@ -275,14 +277,18 @@ const Admin = () => {
               w="100%"
               mb={2}
             />
-            <Flex justifyContent={"space-between"} mt={1}>
+            <Flex
+              justifyContent={"space-between"}
+              mt={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="ref_mp_po"
                 placeholder="MP PO"
                 value={formData.ref_mp_po}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
               <Input
                 type="text"
@@ -290,16 +296,20 @@ const Admin = () => {
                 placeholder="Reference"
                 value={formData.ref_ref}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Select
                 name="status"
                 placeholder="Delivery Step"
                 value={formData.status.number}
                 onChange={handleChange}
-                w={"15%"}
+                w={{ base: "100%", md: "45%" }}
                 mr={0}
               >
                 <option value="1">1</option>
@@ -312,7 +322,7 @@ const Admin = () => {
                 placeholder="Delivery Status"
                 value={formData.status_description}
                 onChange={handleChange}
-                w="20%"
+                w={{ base: "100%", md: "45%" }}
               >
                 <option value="Confirmed">Confirmed</option>
                 <option value="Booking">Booking</option>
@@ -330,18 +340,23 @@ const Admin = () => {
                 placeholder="Collection City"
                 value={formData.collection_city}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
+                mt={{ base: 2, md: 0 }}
               />
             </Flex>
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="collection_street"
                 placeholder="Collection Street"
                 value={formData.collection_street}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -349,18 +364,22 @@ const Admin = () => {
                 placeholder="Collection Zip Code"
                 value={formData.collection_zip_code}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="collection_country"
                 placeholder="Collection Country"
                 value={formData.collection_country}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -368,19 +387,23 @@ const Admin = () => {
                 placeholder="Delivery City"
                 value={formData.delivery_city}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
 
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="delivery_street"
                 placeholder="Delivery Street"
                 value={formData.delivery_street}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -388,19 +411,23 @@ const Admin = () => {
                 placeholder="Delivery Zip Code"
                 value={formData.delivery_zip_code}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
 
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="delivery_country"
                 placeholder="Delivery Country"
                 value={formData.delivery_country}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -408,19 +435,23 @@ const Admin = () => {
                 placeholder="Collection Date (YYYY-MM-DD)"
                 value={formData.collection_date}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
 
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="delivery_date"
                 placeholder="Delivery Date (YYYY-MM-DD)"
                 value={formData.delivery_date}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -428,19 +459,23 @@ const Admin = () => {
                 placeholder="Collection Time"
                 value={formData.collection_time}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
 
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="delivery_time"
                 placeholder="Delivery Time"
                 value={formData.delivery_time}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -448,19 +483,23 @@ const Admin = () => {
                 placeholder="Vehicle Pallet"
                 value={formData.vehicle_pallet}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
 
-            <Flex justifyContent={"space-between"} my={1}>
+            <Flex
+              justifyContent={"space-between"}
+              my={1}
+              flexDir={{ base: "column", md: "row" }}
+            >
               <Input
                 type="text"
                 name="rate"
                 placeholder="Rate"
                 value={formData.rate}
                 onChange={handleChange}
-                w="45%"
-                mr={"10%"}
+                w={{ base: "100%", md: "45%" }}
+                mr={{ base: 0, md: "10%" }}
               />
               <Input
                 type="text"
@@ -468,7 +507,7 @@ const Admin = () => {
                 placeholder="Currency ($, £, €) "
                 value={formData.rate_currency}
                 onChange={handleChange}
-                w="45%"
+                w={{ base: "100%", md: "45%" }}
               />
             </Flex>
           </Flex>
@@ -485,67 +524,72 @@ const Admin = () => {
           </Box>
         </form>
       )}
+      <Button onClick={() => setShowFilters(!showFilters)} mb={4}>
+        Show filters
+      </Button>
 
-      <Box
-        mb={4}
-        display="flex"
-        flexDir={{ base: "column", md: "row" }}
-        justifyContent="space-between"
-      >
-        <FormControl mx={2}>
-          <Select
-            height={{ base: "40px", "2xl": "50px" }}
-            placeholder="Search by Status"
-            onChange={(e) => setSearchStatus(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </Select>
-        </FormControl>
-        <FormControl my={{ base: 2, md: 0 }} mx={2}>
-          <Input
-            height={{ base: "40px", "2xl": "50px" }}
-            type="text"
-            placeholder="Search by City"
-            onChange={(e) => setSearchCity(e.target.value)}
-          />
-        </FormControl>
-        <FormControl mx={2}>
-          <Input
-            height={{ base: "40px", "2xl": "50px" }}
-            type="text"
-            placeholder="Search by MP_PO"
-            onChange={(e) => setSearchMPPo(e.target.value)}
-          />
-        </FormControl>
-        <FormControl my={{ base: 2, md: 0 }} mx={2}>
-          <Input
-            height={{ base: "40px", "2xl": "50px" }}
-            type="text"
-            placeholder="Search by Reference"
-            onChange={(e) => setSearchReference(e.target.value)}
-          />
-        </FormControl>
+      {showFilters && (
+        <Box
+          mb={10}
+          display="flex"
+          flexDir={{ base: "column", md: "row" }}
+          justifyContent="space-between"
+        >
+          <FormControl mx={2}>
+            <Select
+              height={{ base: "40px", "2xl": "50px" }}
+              placeholder="Search by Status"
+              onChange={(e) => setSearchStatus(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </Select>
+          </FormControl>
+          <FormControl my={{ base: 2, md: 0 }} mx={2}>
+            <Input
+              height={{ base: "40px", "2xl": "50px" }}
+              type="text"
+              placeholder="Search by City"
+              onChange={(e) => setSearchCity(e.target.value)}
+            />
+          </FormControl>
+          <FormControl mx={2}>
+            <Input
+              height={{ base: "40px", "2xl": "50px" }}
+              type="text"
+              placeholder="Search by MP PO"
+              onChange={(e) => setSearchMPPo(e.target.value)}
+            />
+          </FormControl>
+          <FormControl my={{ base: 2, md: 0 }} mx={2}>
+            <Input
+              height={{ base: "40px", "2xl": "50px" }}
+              type="text"
+              placeholder="Search by Reference"
+              onChange={(e) => setSearchReference(e.target.value)}
+            />
+          </FormControl>
 
-        <Box mb={4} display="flex" justifyContent="space-between">
-          <Button
-            onClick={() => setSortBy("oldest")}
-            height={{ base: "40px", "2xl": "50px" }}
-            mx={2}
-          >
-            Most Recent
-          </Button>
-          <Button
-            onClick={() => setSortBy("mostRecent")}
-            height={{ base: "40px", "2xl": "50px" }}
-          >
-            Oldest
-          </Button>
+          <Box mb={4} display="flex" justifyContent="space-between">
+            <Button
+              onClick={() => setSortBy("oldest")}
+              height={{ base: "40px", "2xl": "50px" }}
+              mx={2}
+            >
+              Most Recent
+            </Button>
+            <Button
+              onClick={() => setSortBy("mostRecent")}
+              height={{ base: "40px", "2xl": "50px" }}
+            >
+              Oldest
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
       <Text fontSize="32px">All loads:</Text>
       <Table mt={8} mb={12}>
         <Thead>
@@ -567,12 +611,21 @@ const Admin = () => {
               <Tr key={index}>
                 <Td>
                   {editingLoads[load.id] ? (
-                    <Input
-                      type="text"
-                      name="email"
-                      value={load?.formData?.email}
-                      onChange={(e) => handleEditChange(e, load.id)}
-                    />
+                    <>
+                      <Text
+                        ml={2}
+                        mb={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Email:
+                      </Text>
+                      <Input
+                        type="text"
+                        name="email"
+                        value={load?.formData?.email}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
                   ) : (
                     load?.formData?.email
                   )}
@@ -580,6 +633,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        mb={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        MP PO:
+                      </Text>
                       <Input
                         type="text"
                         name="ref_mp_po"
@@ -587,6 +647,13 @@ const Admin = () => {
                         value={load?.formData?.ref_mp_po}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Reference:
+                      </Text>
                       <Input
                         type="text"
                         name="ref_ref"
@@ -611,6 +678,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        mb={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Status:
+                      </Text>
                       <Select
                         name="status"
                         placeholder="Delivery Step"
@@ -623,6 +697,13 @@ const Admin = () => {
                         <option value="4">4</option>
                       </Select>
 
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery Status:
+                      </Text>
                       <Select
                         name="status_description"
                         placeholder="Delivery Status"
@@ -653,6 +734,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        mb={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Collection City:
+                      </Text>
                       <Input
                         type="text"
                         name="collection_city"
@@ -660,7 +748,13 @@ const Admin = () => {
                         value={load?.formData?.collection_city}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
-
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Collection Street:
+                      </Text>
                       <Input
                         type="text"
                         name="collection_street"
@@ -668,6 +762,13 @@ const Admin = () => {
                         value={load?.formData?.collection_street}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Collection Zip Code:
+                      </Text>
                       <Input
                         type="text"
                         name="collection_zip_code"
@@ -675,6 +776,13 @@ const Admin = () => {
                         value={load?.formData?.collection_zip_code}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Collection Country:
+                      </Text>
                       <Input
                         type="text"
                         name="collection_country"
@@ -685,10 +793,18 @@ const Admin = () => {
                     </>
                   ) : (
                     <>
-                      <Text mb={3}>
-                        <span style={{ fontWeight: "500" }}>
-                          {load?.formData?.collection_city}
-                        </span>
+                      {isMobile && (
+                        <Text
+                          color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                          mr={3}
+                          mb={4}
+                          fontWeight={"500"}
+                        >
+                          Collection:
+                        </Text>
+                      )}
+                      <Text mb={3} mt={2}>
+                        {load?.formData?.collection_city}
                       </Text>
                       <Text my={4}>{load?.formData?.collection_street}</Text>
                       <Text>
@@ -702,6 +818,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        mb={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery City:
+                      </Text>
                       <Input
                         type="text"
                         name="delivery_city"
@@ -709,6 +832,13 @@ const Admin = () => {
                         value={load?.formData?.delivery_city}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery Street:
+                      </Text>
                       <Input
                         type="text"
                         name="delivery_street"
@@ -716,6 +846,13 @@ const Admin = () => {
                         value={load?.formData?.delivery_street}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery Zip Code:
+                      </Text>
                       <Input
                         type="text"
                         name="delivery_zip_code"
@@ -723,6 +860,13 @@ const Admin = () => {
                         value={load?.formData?.delivery_zip_code}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery Country:
+                      </Text>
                       <Input
                         type="text"
                         name="delivery_country"
@@ -733,11 +877,17 @@ const Admin = () => {
                     </>
                   ) : (
                     <>
-                      <Text mb={3}>
-                        <span style={{ fontWeight: "500" }}>
-                          {load?.formData?.delivery_city}
-                        </span>
-                      </Text>
+                      {isMobile && (
+                        <Text
+                          color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                          mr={3}
+                          mb={4}
+                          fontWeight={"500"}
+                        >
+                          Delivery:
+                        </Text>
+                      )}
+                      <Text mb={3}>{load?.formData?.delivery_city}</Text>
                       <Text my={4}>{load?.formData?.delivery_street}</Text>
                       <Text>
                         {load?.formData?.delivery_zip_code},{" "}
@@ -750,6 +900,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Collection Date & Time:
+                      </Text>
                       <Input
                         type="text"
                         name="collection_date"
@@ -764,6 +921,13 @@ const Admin = () => {
                         value={load?.formData?.collection_time}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Delivery Date & Time:
+                      </Text>
                       <Input
                         type="text"
                         name="delivery_date"
@@ -805,13 +969,22 @@ const Admin = () => {
 
                 <Td>
                   {editingLoads[load.id] ? (
-                    <Input
-                      type="text"
-                      name="vehicle_pallet"
-                      placeholder="Vehicle Pallet"
-                      value={load?.formData?.vehicle_pallet}
-                      onChange={(e) => handleEditChange(e, load.id)}
-                    />
+                    <>
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Vehicle Pallet:
+                      </Text>
+                      <Input
+                        type="text"
+                        name="vehicle_pallet"
+                        placeholder="Vehicle Pallet"
+                        value={load?.formData?.vehicle_pallet}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
                   ) : (
                     load?.formData?.vehicle_pallet.toUpperCase()
                   )}
@@ -819,6 +992,13 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <>
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Currency:
+                      </Text>
                       <Input
                         type="text"
                         name="rate_currency"
@@ -826,6 +1006,13 @@ const Admin = () => {
                         value={load?.formData?.rate_currency}
                         onChange={(e) => handleEditChange(e, load.id)}
                       />
+                      <Text
+                        ml={2}
+                        my={4}
+                        className={editingLoads[load.id] ? "editTableName" : ""}
+                      >
+                        Rate:
+                      </Text>
                       <Input
                         type="text"
                         name="rate"
@@ -845,6 +1032,7 @@ const Admin = () => {
                       size={{ base: "sm", "2xl": "lg" }}
                       colorScheme="teal"
                       onClick={() => saveEdits(load.id)}
+                      mr={4}
                     >
                       Save
                     </Button>
