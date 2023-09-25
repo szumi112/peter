@@ -84,6 +84,14 @@ const DashboardDisplay = () => {
     setFilteredLoads(sortedLoads);
   };
 
+  const updateLoadNoteInFilteredLoads = (loadId, note) => {
+    setFilteredLoads((prevFilteredLoads) =>
+      prevFilteredLoads.map((load) =>
+        load.id === loadId ? { ...load, note } : load
+      )
+    );
+  };
+
   const updateLoadNotes = async (loadId, note) => {
     try {
       const loadDocRef = doc(db, "loads", loadId);
@@ -120,6 +128,7 @@ const DashboardDisplay = () => {
           );
         }
 
+        updateLoadNoteInFilteredLoads(loadId, updatedNotes);
         setUserMessage("");
       }
     } catch (error) {
@@ -181,30 +190,14 @@ const DashboardDisplay = () => {
 
   return (
     <Box py={4}>
-      <Box mb={4} display="flex" justifyContent="space-between">
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by City"
-            onChange={(e) => setSearchCity(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by MP_PO"
-            onChange={(e) => setSearchMPPo(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by Reference"
-            onChange={(e) => setSearchReference(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
+      <Flex
+        mb={4}
+        justifyContent="space-between"
+        flexDir={{ base: "column", md: "row" }}
+      >
+        <FormControl mx={2}>
           <Select
+            height={{ base: "40px", "2xl": "50px" }}
             placeholder="Search by Status"
             onChange={(e) => setSearchStatus(e.target.value)}
           >
@@ -215,33 +208,75 @@ const DashboardDisplay = () => {
             <option value="4">4</option>
           </Select>
         </FormControl>
-        <Box mb={4} display="flex" justifyContent="space-between">
-          <Button onClick={() => setSortBy("oldest")}>Most Recent</Button>
-          <Button onClick={() => setSortBy("mostRecent")}>Oldest</Button>
-        </Box>
-      </Box>
+        <FormControl my={{ base: 2, md: 0 }} mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by City"
+            onChange={(e) => setSearchCity(e.target.value)}
+          />
+        </FormControl>
+        <FormControl my={{ base: 2, md: 0 }} mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by MP_PO"
+            onChange={(e) => setSearchMPPo(e.target.value)}
+          />
+        </FormControl>
+        <FormControl my={{ base: 2, md: 0 }} mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by Reference"
+            onChange={(e) => setSearchReference(e.target.value)}
+          />
+        </FormControl>
 
-      <Text mb={8} fontSize={"21px"} fontWeight={"500"}>
-        Loads in Progress:
+        <Box
+          mb={4}
+          display="flex"
+          justifyContent={{ base: "left", md: "space-between" }}
+        >
+          <Button
+            onClick={() => setSortBy("oldest")}
+            mx={2}
+            height={{ base: "40px", "2xl": "50px" }}
+          >
+            Most Recent
+          </Button>
+          <Button
+            onClick={() => setSortBy("mostRecent")}
+            height={{ base: "40px", "2xl": "50px" }}
+          >
+            Oldest
+          </Button>
+        </Box>
+      </Flex>
+
+      <Text
+        mb={8}
+        fontSize={{ base: "21px", "2xl": "32px" }}
+        fontWeight={"500"}
+      >
+        Your Loads:
       </Text>
 
       <Table>
         <Thead>
           <Tr>
-            <Th color={colorMode === "dark" ? "gray.100" : "gray.700"}>
-              MP PO/Reference
-            </Th>
-            <Th>Status</Th>
-            <Th>Collection</Th>
-            <Th>Delivery</Th>
-            <Th>Dates</Th>
-            <Th>Vehicle Pallet</Th>
-            <Th>Rate</Th>
-            <Th></Th>
+            <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
+            <Th className="table-responsive-sizes-text">Status</Th>
+            <Th className="table-responsive-sizes-text">Collection</Th>
+            <Th className="table-responsive-sizes-text">Delivery</Th>
+            <Th className="table-responsive-sizes-text">Dates</Th>
+            <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
+            <Th className="table-responsive-sizes-text">Rate</Th>
+            <Th className="table-responsive-sizes-text"></Th>
           </Tr>
         </Thead>
 
-        <Tbody fontSize={"12px"}>
+        <Tbody className="table-responsive-sizes-text">
           {filteredLoads?.map((load, index) => (
             <Tr
               key={index}
@@ -253,6 +288,7 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
                     fontWeight={"500"}
+                    mb={4}
                   >
                     MP PO:
                   </Text>
@@ -287,6 +323,7 @@ const DashboardDisplay = () => {
                         ? statusColors[load?.formData?.status] || "gray.400"
                         : "gray.400"
                     }
+                    mb={4}
                   >
                     {load?.formData?.status_description}
                   </Text>
@@ -323,12 +360,14 @@ const DashboardDisplay = () => {
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
                   fontWeight={"500"}
+                  mb={4}
                 >
                   {load?.formData?.collection_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
+                  mb={4}
                 >
                   {load?.formData?.collection_street},{" "}
                   {load?.formData?.collection_zip_code}
@@ -354,12 +393,14 @@ const DashboardDisplay = () => {
                   color={colorMode === "dark" ? "gray.200" : "gray.700"}
                   mr={3}
                   fontWeight={"500"}
+                  mb={4}
                 >
                   {load?.formData?.delivery_city}
                 </Text>
                 <Text
                   color={colorMode === "dark" ? "gray.400" : "gray.500"}
                   fontWeight={"400"}
+                  mb={4}
                 >
                   {load?.formData?.delivery_street},{" "}
                   {load?.formData?.delivery_zip_code}
@@ -377,6 +418,7 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     mr={3}
                     fontWeight={"500"}
+                    mb={4}
                   >
                     Collection:
                   </Text>
@@ -435,7 +477,7 @@ const DashboardDisplay = () => {
               <Td>
                 <Button
                   colorScheme="blue"
-                  size="sm"
+                  size={{ base: "sm", "2xl": "lg" }}
                   onClick={() => openModalForLoad(load.id)}
                 >
                   Notes
@@ -444,6 +486,7 @@ const DashboardDisplay = () => {
                 <Modal
                   isOpen={openModalId === load.id}
                   onClose={closeModalForLoad}
+                  size={{ base: "sm", md: "xl" }}
                 >
                   <ModalOverlay />
                   <ModalContent>
@@ -468,7 +511,6 @@ const DashboardDisplay = () => {
                         <Button
                           colorScheme="green"
                           onClick={() => {
-                            // closeModalForLoad(load.id);
                             updateLoadNotes(load?.id, userMessage);
                           }}
                         >

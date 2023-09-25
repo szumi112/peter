@@ -27,17 +27,20 @@ const Navigation = () => {
       borderBottomColor={colorMode == "dark" ? "gray.700" : "gray.100"}
       pb={4}
     >
-      <Flex justifyContent={"space-between"} alignItems={"center"}>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        flexDir={{ base: "column", md: "row" }}
+      >
         <Image src={logo} mt={"25px"} mb={"10px"} />
-        <Flex alignItems={"center"}>
+        <Flex alignItems={"center"} my={{ base: 8, md: 0 }}>
           <Image
             src={colorMode == "dark" ? white_email : email}
             w="20px"
             h="18px"
             mr={4}
           />
-
-          <Text mr={12}> ???</Text>
+          <Text mr={12}>peter@kcharles.co.uk</Text>
           <Image
             src={colorMode == "dark" ? white_phone : phone}
             w="20px"
@@ -51,7 +54,7 @@ const Navigation = () => {
       <Flex justifyContent={"space-between"} alignItems={"center"} mt={8}>
         {!isAdminRoute ? (
           <Text fontSize={"32px"} fontWeight="bold">
-            MetaPlast Dashboard
+            Metaplast Dashboard
           </Text>
         ) : (
           <Text fontSize={"32px"} fontWeight="bold">

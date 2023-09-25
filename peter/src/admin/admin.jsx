@@ -23,6 +23,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase-config/firebase-config";
 import Navigation from "../dashboard/navigation";
@@ -33,12 +34,14 @@ const Admin = () => {
   const navigate = useNavigate();
   const [loads, setLoads] = useState([]);
   const [data, setData] = useState([]);
+  const [showNotes, setShowNotes] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [searchCity, setSearchCity] = useState("");
   const [searchMPPo, setSearchMPPo] = useState("");
   const [searchReference, setSearchReference] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
   const [sortBy, setSortBy] = useState("mostRecent");
+  const [loadAdded, setLoadAdded] = useState(false);
 
   const toggleForm = () => {
     setShowForm(!showForm);
@@ -75,48 +78,47 @@ const Admin = () => {
     });
   };
 
+  const [editingLoads, setEditingLoads] = useState({});
+  const toggleEdit = (loadId) => {
+    setEditingLoads((prevState) => ({
+      ...prevState,
+      [loadId]: !prevState[loadId],
+    }));
+  };
+
+  const handleEditChange = (e, loadId) => {
+    const { name, value } = e.target;
+    setLoads((prevLoads) => {
+      return prevLoads.map((load) => {
+        if (load.id === loadId) {
+          return {
+            ...load,
+            formData: {
+              ...load.formData,
+              [name]: value,
+            },
+          };
+        }
+        return load;
+      });
+    });
+  };
+
+  const saveEdits = async (loadId) => {
+    const load = loads.find((load) => load.id === loadId);
+
+    const loadDoc = doc(db, "loads", loadId);
+    await updateDoc(loadDoc, {
+      formData: load.formData,
+    });
+
+    toggleEdit(loadId);
+  };
+
   const handleSubmit = async () => {
     await addDoc(loadCollectionRef, { formData });
-    const docRef = await addDoc(loadCollectionRef, { ...formData });
-    const newData = {
-      ref: {
-        mp_po: formData.ref_mp_po,
-        ref: formData.ref_ref,
-      },
-      status: {
-        number: formData.status,
-        description: formData.status_description,
-      },
-      collection: {
-        city: formData.collection_city,
-        street: formData.collection_street,
-        zip_code: formData.collection_zip_code,
-        country: formData.collection_country,
-      },
-      delivery: {
-        city: formData.delivery_city,
-        street: formData.delivery_street,
-        zip_code: formData.delivery_zip_code,
-        country: formData.delivery_country,
-      },
-      dates: {
-        Collection: formData.collection_date,
-        Delivery: formData.delivery_date,
-        CollectionTime: formData.collection_time,
-        DeliveryTime: formData.delivery_time,
-      },
-      vehicle_pallet: formData.vehicle_pallet,
-      rate: formData.rate,
-      rate_currency: formData.rate_currency,
-      email: formData.email,
-    };
 
-    const newLoad = {
-      ...formData,
-      id: docRef.id,
-    };
-
-    setLoads((prevLoads) => [newLoad, ...prevLoads]);
+    setLoadAdded((add) => !add);
 
     setFormData({
       email: "",
@@ -148,7 +150,7 @@ const Admin = () => {
       setLoads(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
     getLoads();
-  }, []);
+  }, [loadAdded]);
 
   const filterLoads = () => {
     let filteredLoads = [...loads];
@@ -222,7 +224,6 @@ const Admin = () => {
     const loadDoc = doc(db, "loads", id);
     await deleteDoc(loadDoc);
 
-    // Update the state to remove the deleted load
     setLoads((prevLoads) => prevLoads.filter((load) => load.id !== id));
   };
 
@@ -238,7 +239,7 @@ const Admin = () => {
         >
           {"\u{1F868}"} Back to dashboard
         </Button>
-        <Button onClick={toggleForm}>
+        <Button onClick={toggleForm} colorScheme={"blue"}>
           {showForm ? "➖ Hide Form" : "➕ Add a new load"}
         </Button>
       </Flex>
@@ -249,7 +250,7 @@ const Admin = () => {
             <Input
               type="text"
               name="email"
-              placeholder="For who is this load for? Provide a valid e-mail address"
+              placeholder="Customer's contact email"
               value={formData.email}
               onChange={handleChange}
               w="100%"
@@ -460,30 +461,15 @@ const Admin = () => {
         </form>
       )}
 
-      <Box mb={4} display="flex" justifyContent="space-between">
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by City"
-            onChange={(e) => setSearchCity(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by MP_PO"
-            onChange={(e) => setSearchMPPo(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="Search by Reference"
-            onChange={(e) => setSearchReference(e.target.value)}
-          />
-        </FormControl>
-        <FormControl>
+      <Box
+        mb={4}
+        display="flex"
+        flexDir={{ base: "column", md: "row" }}
+        justifyContent="space-between"
+      >
+        <FormControl mx={2}>
           <Select
+            height={{ base: "40px", "2xl": "50px" }}
             placeholder="Search by Status"
             onChange={(e) => setSearchStatus(e.target.value)}
           >
@@ -494,91 +480,397 @@ const Admin = () => {
             <option value="4">4</option>
           </Select>
         </FormControl>
+        <FormControl my={{ base: 2, md: 0 }} mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by City"
+            onChange={(e) => setSearchCity(e.target.value)}
+          />
+        </FormControl>
+        <FormControl mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by MP_PO"
+            onChange={(e) => setSearchMPPo(e.target.value)}
+          />
+        </FormControl>
+        <FormControl my={{ base: 2, md: 0 }} mx={2}>
+          <Input
+            height={{ base: "40px", "2xl": "50px" }}
+            type="text"
+            placeholder="Search by Reference"
+            onChange={(e) => setSearchReference(e.target.value)}
+          />
+        </FormControl>
+
         <Box mb={4} display="flex" justifyContent="space-between">
-          <Button onClick={() => setSortBy("oldest")}>Most Recent</Button>
-          <Button onClick={() => setSortBy("mostRecent")}>Oldest</Button>
+          <Button
+            onClick={() => setSortBy("oldest")}
+            height={{ base: "40px", "2xl": "50px" }}
+            mx={2}
+          >
+            Most Recent
+          </Button>
+          <Button
+            onClick={() => setSortBy("mostRecent")}
+            height={{ base: "40px", "2xl": "50px" }}
+          >
+            Oldest
+          </Button>
         </Box>
       </Box>
       <Text fontSize="32px">All loads:</Text>
       <Table mt={8} mb={12}>
         <Thead>
           <Tr>
-            <Th>Email</Th>
-            <Th>MP PO/Reference</Th>
-            <Th>Status</Th>
-            <Th>Collection</Th>
-            <Th>Delivery</Th>
-            <Th>Dates</Th>
-            <Th>Vehicle Pallet</Th>
-            <Th>Rate</Th>
-            <Th>Actions</Th>
+            <Th className="table-responsive-sizes-text">Email</Th>
+            <Th className="table-responsive-sizes-text">MP PO/Reference</Th>
+            <Th className="table-responsive-sizes-text">Status</Th>
+            <Th className="table-responsive-sizes-text">Collection</Th>
+            <Th className="table-responsive-sizes-text">Delivery</Th>
+            <Th className="table-responsive-sizes-text">Dates</Th>
+            <Th className="table-responsive-sizes-text">Vehicle Pallet</Th>
+            <Th className="table-responsive-sizes-text">Rate</Th>
+            <Th className="table-responsive-sizes-text">Actions</Th>
           </Tr>
         </Thead>
-        <Tbody fontSize={"12px"}>
+        <Tbody className="table-responsive-sizes-text">
           {sortedLoads.map((load, index) => (
             <>
               <Tr key={index}>
-                <Td>{load?.formData?.email}</Td>
                 <Td>
-                  MP PO: {load?.formData?.ref_mp_po} <br />
-                  References: {load?.formData?.ref_ref}
+                  {editingLoads[load.id] ? (
+                    <Input
+                      type="text"
+                      name="email"
+                      value={load?.formData?.email}
+                      onChange={(e) => handleEditChange(e, load.id)}
+                    />
+                  ) : (
+                    load?.formData?.email
+                  )}
                 </Td>
                 <Td>
-                  {load?.formData?.status} <br />{" "}
-                  {load?.formData?.status_description}
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Input
+                        type="text"
+                        name="ref_mp_po"
+                        placeholder="MP PO"
+                        value={load?.formData?.ref_mp_po}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="ref_ref"
+                        placeholder="Reference"
+                        value={load?.formData?.ref_ref}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text mb={3}>
+                        <span style={{ fontWeight: "500" }}>MP PO:</span>{" "}
+                        {load?.formData?.ref_mp_po}{" "}
+                      </Text>
+                      <Text>
+                        <span style={{ fontWeight: "500" }}>References:</span>{" "}
+                        {load?.formData?.ref_ref}
+                      </Text>
+                    </>
+                  )}
                 </Td>
                 <Td>
-                  {load?.formData?.collection_city}, <br />
-                  {load?.formData?.collection_street},
-                  {load?.formData?.collection_zip_code}, <br />
-                  {load?.formData?.collection_country}
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Select
+                        name="status"
+                        placeholder="Delivery Step"
+                        value={load?.formData?.status}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      >
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </Select>
+
+                      <Select
+                        name="status_description"
+                        placeholder="Delivery Status"
+                        value={load?.formData?.status_description}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      >
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Booking">Booking</option>
+                        <option value="Collected">Collected</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Finished</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Load Cancelled">Load Cancelled</option>
+                        <option value="Load Cancelled">
+                          Something Went Wrong
+                        </option>
+                      </Select>
+                    </>
+                  ) : (
+                    <>
+                      <Text mb={3}>{load?.formData?.status}/4</Text>
+                      <Text>{load?.formData?.status_description}</Text>
+                    </>
+                  )}
+                </Td>
+
+                <Td>
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Input
+                        type="text"
+                        name="collection_city"
+                        placeholder="Collection City"
+                        value={load?.formData?.collection_city}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="collection_street"
+                        placeholder="Collection Street"
+                        value={load?.formData?.collection_street}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="collection_zip_code"
+                        placeholder="Collection Zip Code"
+                        value={load?.formData?.collection_zip_code}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="collection_country"
+                        placeholder="Collection Country"
+                        value={load?.formData?.collection_country}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text mb={3}>
+                        <span style={{ fontWeight: "500" }}>
+                          {load?.formData?.collection_city}
+                        </span>
+                      </Text>
+                      <Text my={4}>{load?.formData?.collection_street}</Text>
+                      <Text>
+                        {load?.formData?.collection_zip_code},{" "}
+                        {load?.formData?.collection_country}
+                      </Text>
+                    </>
+                  )}
+                </Td>
+
+                <Td>
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Input
+                        type="text"
+                        name="delivery_city"
+                        placeholder="Delivery City"
+                        value={load?.formData?.delivery_city}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="delivery_street"
+                        placeholder="Delivery Street"
+                        value={load?.formData?.delivery_street}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="delivery_zip_code"
+                        placeholder="Delivery Zip Code"
+                        value={load?.formData?.delivery_zip_code}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="delivery_country"
+                        placeholder="Delivery Country"
+                        value={load?.formData?.delivery_country}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text mb={3}>
+                        <span style={{ fontWeight: "500" }}>
+                          {load?.formData?.delivery_city}
+                        </span>
+                      </Text>
+                      <Text my={4}>{load?.formData?.delivery_street}</Text>
+                      <Text>
+                        {load?.formData?.delivery_zip_code},{" "}
+                        {load?.formData?.delivery_country}
+                      </Text>
+                    </>
+                  )}
+                </Td>
+
+                <Td>
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Input
+                        type="text"
+                        name="collection_date"
+                        placeholder="Collection Date (YYYY-MM-DD)"
+                        value={load?.formData?.collection_date}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="collection_time"
+                        placeholder="Collection Time"
+                        value={load?.formData?.collection_time}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="delivery_date"
+                        placeholder="Delivery Date (YYYY-MM-DD)"
+                        value={load?.formData?.delivery_date}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="delivery_time"
+                        placeholder="Delivery Time"
+                        value={load?.formData?.delivery_time}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text mb={3}>
+                        <span
+                          style={{ fontWeight: "500", marginRight: "10px" }}
+                        >
+                          Collection:
+                        </span>
+                        {load?.formData?.collection_date},{" "}
+                        {load?.formData?.collection_time}
+                      </Text>
+                      <Text mb={3}>
+                        <span
+                          style={{ fontWeight: "500", marginRight: "10px" }}
+                        >
+                          Delivery:
+                        </span>
+                        {load?.formData?.delivery_date},{" "}
+                        {load?.formData?.delivery_time}
+                      </Text>
+                    </>
+                  )}
+                </Td>
+
+                <Td>
+                  {editingLoads[load.id] ? (
+                    <Input
+                      type="text"
+                      name="vehicle_pallet"
+                      placeholder="Vehicle Pallet"
+                      value={load?.formData?.vehicle_pallet}
+                      onChange={(e) => handleEditChange(e, load.id)}
+                    />
+                  ) : (
+                    load?.formData?.vehicle_pallet.toUpperCase()
+                  )}
                 </Td>
                 <Td>
-                  {load?.formData?.delivery_city}, <br />
-                  {load?.formData?.delivery_street},
-                  {load?.formData?.delivery_zip_code}, <br />
-                  {load?.formData?.delivery_country}
+                  {editingLoads[load.id] ? (
+                    <>
+                      <Input
+                        type="text"
+                        name="rate_currency"
+                        placeholder="Currency ($, £, €)"
+                        value={load?.formData?.rate_currency}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                      <Input
+                        type="text"
+                        name="rate"
+                        placeholder="Rate"
+                        value={load?.formData?.rate}
+                        onChange={(e) => handleEditChange(e, load.id)}
+                      />
+                    </>
+                  ) : (
+                    `${load?.formData?.rate_currency} ${load?.formData?.rate}`
+                  )}
                 </Td>
+
                 <Td>
-                  {load?.formData?.collection_date},{" "}
-                  {load?.formData?.collection_time}
-                  , <br />
-                  {load?.formData?.delivery_date},{" "}
-                  {load?.formData?.delivery_time}
-                </Td>
-                <Td>{load?.formData?.vehicle_pallet}</Td>
-                <Td>
-                  {load?.formData?.rate_currency} {load?.formData?.rate}
-                </Td>
-                <Td>
-                  <Flex>
+                  {editingLoads[load.id] ? (
                     <Button
-                      mr={2}
-                      size="sm"
+                      size={{ base: "sm", "2xl": "lg" }}
                       colorScheme="teal"
-                      bg={colorMode === "dark" ? "green.500" : "teal.500"}
+                      onClick={() => saveEdits(load.id)}
+                    >
+                      Save
+                    </Button>
+                  ) : (
+                    <Button
+                      size={{ base: "sm", "2xl": "lg" }}
+                      colorScheme="teal"
+                      mr={4}
+                      onClick={() => toggleEdit(load.id)}
                     >
                       ✏ Edit
                     </Button>
-                    <Button
-                      size="sm"
-                      colorScheme="red"
-                      bg={colorMode === "dark" ? "red.500" : "red.500"}
-                      onClick={() => {
-                        deleteLoad(load?.id);
-                      }}
-                    >
-                      🗑️ Delete
-                    </Button>
-                  </Flex>
+                  )}
+                  <Button
+                    size={{ base: "sm", "2xl": "lg" }}
+                    colorScheme="red"
+                    bg={colorMode === "dark" ? "red.500" : "red.500"}
+                    onClick={() => {
+                      deleteLoad(load?.id);
+                    }}
+                  >
+                    🗑️ Delete
+                  </Button>
+                  {load?.note && (
+                    <Box mt={3}>
+                      <Button
+                        size={{ base: "sm", "2xl": "lg" }}
+                        fontWeight={"500"}
+                        onClick={() => setShowNotes(!showNotes)}
+                      >
+                        Show notes
+                      </Button>
+                      {showNotes && (
+                        <Text>
+                          {load.note
+                            .split(/\b(\d{1,2}\/\d{1,2}\/\d{4})\b/g)
+                            .map((text, index) =>
+                              /\d{1,2}\/\d{1,2}\/\d{4}/.test(text) ? (
+                                <React.Fragment key={index}>
+                                  <br />
+                                  {text}
+                                </React.Fragment>
+                              ) : (
+                                text
+                              )
+                            )}
+                        </Text>
+                      )}
+                    </Box>
+                  )}
                 </Td>
               </Tr>
-              {data?.notes && (
-                <Flex mt={3}>
-                  <Text>Notes:</Text>
-                  <Text>{data?.notes}</Text>
-                </Flex>
-              )}
             </>
           ))}
         </Tbody>

@@ -48,3 +48,43 @@ thead th {
     border-bottom: 0;
   }
 }
+
+.table-responsive-sizes-text {
+  font-size: 21px !important;
+}
+
+@media screen and (max-width: 3000px) {
+  .table-responsive-sizes-text {
+    font-size: 21px !important;
+  }
+}
+
+@media screen and (max-width: 2500px) {
+  .table-responsive-sizes-text {
+    font-size: 18px !important;
+  }
+}
+
+@media screen and (max-width: 1900px) {
+  .table-responsive-sizes-text {
+    font-size: 16px !important;
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  .table-responsive-sizes-text {
+    font-size: 16px !important;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .table-responsive-sizes-text {
+    font-size: 14px !important;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .table-responsive-sizes-text {
+    font-size: 24px !important;
+  }
+}
