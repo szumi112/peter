@@ -526,8 +526,9 @@ const Admin = () => {
             <Button
               onClick={handleSubmit}
               my={6}
+              px={4}
               ml="auto"
-              w="20%"
+              w={{ base: "100%", md: "20%" }}
               colorScheme="green"
             >
               Add Load
@@ -536,7 +537,7 @@ const Admin = () => {
         </form>
       )}
       <Button onClick={() => setShowFilters(!showFilters)} mb={4}>
-        Show filters
+        {showFilters ? "Hide Filters" : "Show Filters"}
       </Button>
 
       {showFilters && (

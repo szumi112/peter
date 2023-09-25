@@ -43,65 +43,34 @@ const Navigation = () => {
       <Flex
         justifyContent={"space-between"}
         alignItems={"center"}
-        flexDir={{ base: "column", md: "row" }}
+        flexDir={{ base: "column-reverse", md: "row" }}
       >
-        <Image
-          src={logo}
-          mt={"25px"}
-          mb={"10px"}
-          cursor="pointer"
-          onClick={() => navigate("/")}
-        />
-        <IconButton
-          aria-label="Open mobile menu"
-          icon={<HamburgerIcon />}
-          display={{ base: "block", md: "none" }}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          variant="ghost"
-        />
-        <Collapse
-          in={mobileMenuOpen}
-          animateOpacity
-          display={{ base: "block", md: "none" }}
-        >
-          <VStack
-            spacing={4}
-            alignItems="center"
-            mt={4}
-            pb={4}
-            display={{ base: "flex", md: "none" }}
-            borderBottom="1px solid"
-            borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}
-          >
-            {isAdminRoute && (
-              <Text fontSize={"32px"} fontWeight="bold">
-                Admin Panel
-              </Text>
-            )}
-
-            {[
-              "test1@test1.com",
-              "suzanna.k@kcharles.co.uk",
-              "peter@kcharles.co.uk",
-            ].includes(userInfo) &&
-              !isAdminRoute && (
-                <Button
-                  onClick={() => navigate("/admin")}
-                  colorScheme="red"
-                  bg={colorMode === "dark" ? "red.400" : "red.400"}
-                >
-                  Admin Panel
-                </Button>
-              )}
-
-            <Button onClick={handleClick}>Log out</Button>
-            <ColorModeSwitch />
-          </VStack>
-        </Collapse>
         <Flex
           alignItems={"center"}
-          my={{ base: 8, md: 0 }}
-          flexDir={{ base: "column", md: "row" }}
+          justifyContent={"space-between"}
+          w={{ base: "100%", md: "inherit" }}
+          mb={{ base: mobileMenuOpen ? 0 : 4, md: 0 }}
+        >
+          <Image
+            src={logo}
+            mt={"25px"}
+            mb={"10px"}
+            cursor="pointer"
+            onClick={() => navigate("/")}
+          />
+          <IconButton
+            aria-label="Open mobile menu"
+            icon={<HamburgerIcon />}
+            display={{ base: "block", md: "none" }}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            variant="ghost"
+          />
+        </Flex>
+
+        <Flex
+          alignItems={"center"}
+          my={{ base: 0, md: 0 }}
+          flexDir={{ base: "column", sm: "row" }}
         >
           <Flex alignItems={"center"} m={2}>
             <Image
@@ -126,6 +95,46 @@ const Navigation = () => {
           <ColorModeSwitch />
         </Box>
       </Flex>
+      <Collapse
+        in={mobileMenuOpen}
+        animateOpacity
+        display={{ base: "block", md: "none" }}
+      >
+        <VStack
+          spacing={4}
+          alignItems="center"
+          mt={4}
+          mb={4}
+          pb={4}
+          display={{ base: "flex", md: "none" }}
+          borderBottom="1px solid"
+          borderColor={colorMode === "dark" ? "gray.700" : "gray.100"}
+        >
+          {isAdminRoute && (
+            <Text fontSize={"32px"} fontWeight="bold">
+              Admin Panel
+            </Text>
+          )}
+
+          {[
+            "test1@test1.com",
+            "suzanna.k@kcharles.co.uk",
+            "peter@kcharles.co.uk",
+          ].includes(userInfo) &&
+            !isAdminRoute && (
+              <Button
+                onClick={() => navigate("/admin")}
+                colorScheme="red"
+                bg={colorMode === "dark" ? "red.400" : "red.400"}
+              >
+                Admin Panel
+              </Button>
+            )}
+
+          <Button onClick={handleClick}>Log out</Button>
+          <ColorModeSwitch />
+        </VStack>
+      </Collapse>
       <Flex
         justifyContent={"space-between"}
         alignItems={"center"}
