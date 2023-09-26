@@ -28,6 +28,7 @@ import {
 import { db } from "../firebase-config/firebase-config";
 import Navigation from "../dashboard/navigation";
 import DeleteConfirmationModal from "./delete-modal";
+import NotesModal from "./notes-modal";
 
 const Admin = () => {
   const { colorMode } = useColorMode();
@@ -35,7 +36,6 @@ const Admin = () => {
   const isMobile = window.innerWidth <= 1100;
   const navigate = useNavigate();
   const [loads, setLoads] = useState([]);
-  // const [data, setData] = useState([]);
   const [showNotes, setShowNotes] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [searchCity, setSearchCity] = useState("");
@@ -47,6 +47,10 @@ const Admin = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [loadToDelete, setLoadToDelete] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
+
+  const toggleNotes = () => {
+    setShowNotes(!showNotes);
+  };
 
   const openDeleteModal = (loadId) => {
     setLoadToDelete(loadId);
@@ -1073,10 +1077,9 @@ const Admin = () => {
                   {editingLoads[load.id] ? (
                     <Button
                       size={{ base: "sm", "2xl": "lg" }}
-                      colorScheme="teal"
                       onClick={() => saveEdits(load.id)}
-                      mr={4}
-                      w={{ base: "100%", md: "inherit" }}
+                      w={"100%"}
+                      variant="ghost"
                     >
                       ✔️ Save
                     </Button>
@@ -1084,7 +1087,6 @@ const Admin = () => {
                     <Button
                       my={2}
                       size={{ base: "sm", "2xl": "lg" }}
-                      colorScheme="teal"
                       mr={4}
                       w={"100%"}
                       onClick={() => toggleEdit(load.id)}
@@ -1097,8 +1099,6 @@ const Admin = () => {
                   <Button
                     my={2}
                     size={{ base: "sm", "2xl": "lg" }}
-                    colorScheme="red"
-                    // bg={colorMode === "dark" ? "red.500" : "red.500"}
                     w={"100%"}
                     onClick={() => {
                       openDeleteModal(load?.id);
@@ -1119,7 +1119,7 @@ const Admin = () => {
                   />
 
                   {load?.note && (
-                    <Box mt={3}>
+                    <Box mt={1}>
                       <Button
                         size={{ base: "sm", "2xl": "lg" }}
                         fontWeight={"500"}
@@ -1129,13 +1129,19 @@ const Admin = () => {
                       >
                         {!showNotes ? "Show notes" : "Hide Notes"}
                       </Button>
-                      {showNotes && (
-                        <Text>
+                      <NotesModal
+                        isOpen={showNotes}
+                        onClose={toggleNotes}
+                        notes={load.note}
+                      />
+                      {/* {showNotes && (
+                        <Text mb={6}>
                           {load.note
                             .split(/\b(\d{1,2}\/\d{1,2}\/\d{4})\b/g)
                             .map((text, index) =>
                               /\d{1,2}\/\d{1,2}\/\d{4}/.test(text) ? (
                                 <React.Fragment key={index}>
+                                  <br />
                                   <br />
                                   {text}
                                 </React.Fragment>
@@ -1144,7 +1150,7 @@ const Admin = () => {
                               )
                             )}
                         </Text>
-                      )}
+                      )} */}
                     </Box>
                   )}
                 </Td>
