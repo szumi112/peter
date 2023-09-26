@@ -14,10 +14,10 @@ function NotesModal({ isOpen, onClose, notes }) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Notes</ModalHeader>
+        <ModalHeader borderBottom={"1px solid"}>Notes</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <Text mb={6}>
+        <ModalBody mt={0}>
+          <Text mb={10}>
             {notes.split(/\b(\d{1,2}\/\d{1,2}\/\d{4})\b/g).map((text, index) =>
               /\d{1,2}\/\d{1,2}\/\d{4}/.test(text) ? (
                 <React.Fragment key={index}>
