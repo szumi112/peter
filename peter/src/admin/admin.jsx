@@ -835,18 +835,23 @@ const Admin = () => {
                           Collection:
                         </Text>
                       )}
-                      <Text mb={3} mt={2}>
+                      <Text mb={3} mt={2} fontWeight={"500"}>
                         {load?.formData?.collection_city}
                       </Text>
-                      <Text my={4}>{load?.formData?.collection_street}</Text>
-                      <Text mb={4}>
-                        {load?.formData?.collection_zip_code},{" "}
-                        {load?.formData?.collection_country}
+
+                      <Text my={4}>
+                        {load?.formData?.collection_street},{" "}
+                        {load?.formData?.collection_zip_code}
                       </Text>
-                      <Text color="white" fontWeight={"500"}>
-                        {load?.formData?.collection_date},
-                        {load?.formData?.collection_time}
-                      </Text>
+                      <Flex mb={4}>
+                        <Text mr={2}>
+                          {load?.formData?.collection_country},
+                        </Text>
+                        <Text color="white" fontWeight={"500"}>
+                          {load?.formData?.collection_date},
+                          {load?.formData?.collection_time}
+                        </Text>
+                      </Flex>
                     </>
                   )}
                 </Td>
@@ -923,16 +928,20 @@ const Admin = () => {
                           Delivery:
                         </Text>
                       )}
-                      <Text mb={3}>{load?.formData?.delivery_city}</Text>
-                      <Text my={4}>{load?.formData?.delivery_street}</Text>
+                      <Text mb={3} fontWeight={"500"}>
+                        {load?.formData?.delivery_city}
+                      </Text>
                       <Text my={4}>
-                        {load?.formData?.delivery_zip_code},{" "}
-                        {load?.formData?.delivery_country}
+                        {load?.formData?.delivery_street},{" "}
+                        {load?.formData?.delivery_zip_code}
                       </Text>
-                      <Text color="white" fontWeight={"500"}>
-                        {load?.formData?.collection_date},
-                        {load?.formData?.collection_time}
-                      </Text>
+                      <Flex my={4}>
+                        <Text>{load?.formData?.delivery_country},</Text>
+                        <Text fontWeight={"600"} ml={2}>
+                          {load?.formData?.collection_date},
+                          {load?.formData?.collection_time}
+                        </Text>
+                      </Flex>
                     </>
                   )}
                 </Td>
@@ -1076,7 +1085,7 @@ const Admin = () => {
                 <Td>
                   {editingLoads[load.id] ? (
                     <Button
-                      size={{ base: "sm", "2xl": "lg" }}
+                      size={{ base: "md", "2xl": "lg" }}
                       onClick={() => saveEdits(load.id)}
                       w={"100%"}
                       variant="ghost"
@@ -1086,7 +1095,7 @@ const Admin = () => {
                   ) : (
                     <Button
                       my={2}
-                      size={{ base: "sm", "2xl": "lg" }}
+                      size={{ base: "md", "2xl": "lg" }}
                       mr={4}
                       w={"100%"}
                       onClick={() => toggleEdit(load.id)}
@@ -1098,7 +1107,7 @@ const Admin = () => {
                   )}
                   <Button
                     my={2}
-                    size={{ base: "sm", "2xl": "lg" }}
+                    size={{ base: "md", "2xl": "lg" }}
                     w={"100%"}
                     onClick={() => {
                       openDeleteModal(load?.id);
@@ -1121,7 +1130,7 @@ const Admin = () => {
                   {load?.note && (
                     <Box mt={1}>
                       <Button
-                        size={{ base: "sm", "2xl": "lg" }}
+                        size={{ base: "md", "2xl": "lg" }}
                         fontWeight={"500"}
                         onClick={() => setShowNotes(!showNotes)}
                         w={"100%"}

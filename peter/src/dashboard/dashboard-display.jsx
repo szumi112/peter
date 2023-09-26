@@ -386,17 +386,17 @@ const DashboardDisplay = () => {
                   {load?.formData?.collection_street},{" "}
                   {load?.formData?.collection_zip_code}
                 </Text>
-                <Text
-                  mb={4}
-                  color={colorMode === "dark" ? "gray.400" : "gray.500"}
-                  fontWeight={"400"}
-                >
-                  {load?.formData?.collection_country}
-                </Text>
                 <Flex>
                   <Text
+                    mb={4}
+                    color={colorMode === "dark" ? "gray.400" : "gray.500"}
+                    fontWeight={"400"}
+                  >
+                    {load?.formData?.collection_country},
+                  </Text>
+                  <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
-                    mr={3}
+                    ml={2}
                     fontWeight={"400"}
                   >
                     {load?.formData?.collection_date},{" "}
@@ -432,17 +432,17 @@ const DashboardDisplay = () => {
                   {load?.formData?.delivery_street},{" "}
                   {load?.formData?.delivery_zip_code}
                 </Text>
-                <Text
-                  color={colorMode === "dark" ? "gray.400" : "gray.500"}
-                  fontWeight={"400"}
-                  mb={4}
-                >
-                  {load?.formData?.delivery_country}
-                </Text>
                 <Flex>
                   <Text
+                    color={colorMode === "dark" ? "gray.400" : "gray.500"}
+                    fontWeight={"400"}
+                    mb={4}
+                  >
+                    {load?.formData?.delivery_country},
+                  </Text>
+                  <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
-                    mr={3}
+                    ml={2}
                     fontWeight={"400"}
                   >
                     {load?.formData?.delivery_date},{" "}
@@ -501,7 +501,7 @@ const DashboardDisplay = () => {
               <Td>
                 <Button
                   colorScheme="blue"
-                  size={{ base: "sm", "2xl": "lg" }}
+                  size={{ base: "md", "2xl": "lg" }}
                   onClick={() => openModalForLoad(load.id)}
                   w={{ base: "100%", md: "inherit" }}
                   mt={2}
