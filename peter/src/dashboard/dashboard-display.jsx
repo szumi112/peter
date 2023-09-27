@@ -341,20 +341,22 @@ const DashboardDisplay = () => {
                   </Text>
 
                   <Flex>
-                    {Array.from({ length: 4 }, (_, i) => (
-                      <Box
-                        key={i}
-                        w="20px"
-                        h="5px"
-                        bg={
-                          i + 1 <= load?.formData?.status
-                            ? statusColors[load?.formData?.status] || "gray.400"
-                            : "gray.400"
-                        }
-                        borderRadius="20%"
-                        mr="2px"
-                      ></Box>
-                    ))}
+                    {load?.formData?.status &&
+                      Array.from({ length: 4 }, (_, i) => (
+                        <Box
+                          key={i}
+                          w="20px"
+                          h="5px"
+                          bg={
+                            i + 1 <= load?.formData?.status
+                              ? statusColors[load?.formData?.status] ||
+                                "gray.400"
+                              : "gray.400"
+                          }
+                          borderRadius="20%"
+                          mr="2px"
+                        ></Box>
+                      ))}
                   </Flex>
                 </Flex>
               </Td>
@@ -383,7 +385,9 @@ const DashboardDisplay = () => {
                   fontWeight={"400"}
                   mb={4}
                 >
-                  {load?.formData?.collection_street},{" "}
+                  {load?.formData?.collection_street
+                    ? `${load?.formData?.collection_street}, `
+                    : ""}
                   {load?.formData?.collection_zip_code}
                 </Text>
                 <Flex>
@@ -392,14 +396,18 @@ const DashboardDisplay = () => {
                     color={colorMode === "dark" ? "gray.400" : "gray.500"}
                     fontWeight={"400"}
                   >
-                    {load?.formData?.collection_country},
+                    {load?.formData?.collection_country
+                      ? `${load?.formData?.collection_country}, `
+                      : ""}
                   </Text>
                   <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     ml={2}
                     fontWeight={"400"}
                   >
-                    {load?.formData?.collection_date},{" "}
+                    {load?.formData?.collection_date
+                      ? `${load?.formData?.collection_date}, `
+                      : ""}
                     {load?.formData?.collection_time}
                   </Text>
                 </Flex>
@@ -429,7 +437,9 @@ const DashboardDisplay = () => {
                   fontWeight={"400"}
                   mb={4}
                 >
-                  {load?.formData?.delivery_street},{" "}
+                  {load?.formData?.delivery_street
+                    ? `${load?.formData?.delivery_street}, `
+                    : ""}
                   {load?.formData?.delivery_zip_code}
                 </Text>
                 <Flex>
@@ -438,34 +448,44 @@ const DashboardDisplay = () => {
                     fontWeight={"400"}
                     mb={4}
                   >
-                    {load?.formData?.delivery_country},
+                    {load?.formData?.delivery_country
+                      ? `${load?.formData?.delivery_country}, `
+                      : ""}
                   </Text>
                   <Text
                     color={colorMode === "dark" ? "gray.200" : "gray.700"}
                     ml={2}
                     fontWeight={"400"}
                   >
-                    {load?.formData?.delivery_date},{" "}
+                    {load?.formData?.delivery_date
+                      ? `${load?.formData?.delivery_date}, `
+                      : ""}
                     {load?.formData?.delivery_time}
                   </Text>
                 </Flex>
               </Td>
               <Td>
-                <Flex>
-                  <Text
-                    color={colorMode === "dark" ? "gray.200" : "gray.700"}
-                    mr={3}
-                    fontWeight={"500"}
-                  >
-                    ETA:
-                  </Text>
-                  <Text
-                    color={colorMode === "dark" ? "gray.400" : "gray.500"}
-                    fontWeight={"400"}
-                  >
-                    {load?.formData?.eta}
-                  </Text>
-                </Flex>
+                {load?.formData?.eta ? (
+                  <>
+                    <Flex>
+                      <Text
+                        color={colorMode === "dark" ? "gray.200" : "gray.700"}
+                        mr={3}
+                        fontWeight={"500"}
+                      >
+                        ETA:
+                      </Text>
+                      <Text
+                        color={colorMode === "dark" ? "gray.400" : "gray.500"}
+                        fontWeight={"400"}
+                      >
+                        {load?.formData?.eta}
+                      </Text>
+                    </Flex>
+                  </>
+                ) : (
+                  ""
+                )}
               </Td>
               <Td>
                 <Flex alignItems={"center"}>

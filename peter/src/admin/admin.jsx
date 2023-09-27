@@ -756,7 +756,8 @@ const Admin = () => {
                   ) : (
                     <>
                       <Text>
-                        {load?.formData?.status}/4{" "}
+                        {load?.formData?.status}
+                        {load?.formData?.status ? "/4" : ""}{" "}
                         {load?.formData?.status_description}
                       </Text>
                     </>
@@ -840,15 +841,21 @@ const Admin = () => {
                       </Text>
 
                       <Text my={4}>
-                        {load?.formData?.collection_street},{" "}
+                        {load?.formData?.collection_street
+                          ? `${load?.formData?.collection_street}, `
+                          : ""}
                         {load?.formData?.collection_zip_code}
                       </Text>
                       <Flex mb={4}>
                         <Text mr={2}>
-                          {load?.formData?.collection_country},
+                          {load?.formData?.collection_country
+                            ? `${load?.formData?.collection_country}, `
+                            : ""}
                         </Text>
                         <Text color="white" fontWeight={"500"}>
-                          {load?.formData?.collection_date},
+                          {load?.formData?.collection_date
+                            ? `${load?.formData?.collection_date}, `
+                            : ""}
                           {load?.formData?.collection_time}
                         </Text>
                       </Flex>
@@ -931,14 +938,21 @@ const Admin = () => {
                       <Text mb={3} fontWeight={"500"}>
                         {load?.formData?.delivery_city}
                       </Text>
-                      <Text my={4}>
-                        {load?.formData?.delivery_street},{" "}
-                        {load?.formData?.delivery_zip_code}
-                      </Text>
                       <Flex my={4}>
-                        <Text>{load?.formData?.delivery_country},</Text>
+                        <Text mr={2}>{load?.formData?.delivery_street}</Text>
+                        <Text>{load?.formData?.delivery_zip_code}</Text>
+                      </Flex>
+
+                      <Flex my={4}>
+                        <Text>
+                          {load?.formData?.delivery_country
+                            ? `${load?.formData?.delivery_country}, `
+                            : ""}
+                        </Text>
                         <Text fontWeight={"600"} ml={2}>
-                          {load?.formData?.collection_date},
+                          {load?.formData?.collection_date}
+                        </Text>
+                        <Text fontWeight={"600"} ml={2}>
                           {load?.formData?.collection_time}
                         </Text>
                       </Flex>
@@ -1012,7 +1026,7 @@ const Admin = () => {
                         <span
                           style={{ fontWeight: "500", marginRight: "10px" }}
                         >
-                          ETA:
+                          {load?.formData?.eta ? "ETA:" : ""}
                         </span>
                         {load?.formData?.eta}
                       </Text>
