@@ -48,7 +48,7 @@ const DashboardDisplay = () => {
   const [userMessage, setUserMessage] = useState("");
   const [loads, setLoads] = useState([]);
   const [loadModals, setLoadModals] = useState({});
-  const loadsCollectionRef = collection(db, "loads");
+  const loadsCollectionRef = collection(db, "loads-vegking");
   const isMobile = window.innerWidth <= 1100;
 
   const [searchCity, setSearchCity] = useState("");
@@ -94,7 +94,7 @@ const DashboardDisplay = () => {
 
   const updateLoadNotes = async (loadId, note) => {
     try {
-      const loadDocRef = doc(db, "loads", loadId);
+      const loadDocRef = doc(db, "loads-vegking", loadId);
       const loadDocSnapshot = await getDoc(loadDocRef);
 
       if (loadDocSnapshot.exists()) {
