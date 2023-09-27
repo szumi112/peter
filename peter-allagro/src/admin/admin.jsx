@@ -32,7 +32,7 @@ import NotesModal from "./notes-modal";
 
 const Admin = () => {
   const { colorMode } = useColorMode();
-  const loadCollectionRef = collection(db, "loads");
+  const loadCollectionRef = collection(db, "loads-allagro");
   const isMobile = window.innerWidth <= 1100;
   const navigate = useNavigate();
   const [loads, setLoads] = useState([]);
@@ -127,7 +127,7 @@ const Admin = () => {
   const saveEdits = async (loadId) => {
     const load = loads.find((load) => load.id === loadId);
 
-    const loadDoc = doc(db, "loads", loadId);
+    const loadDoc = doc(db, "loads-allagro", loadId);
     await updateDoc(loadDoc, {
       formData: load.formData,
     });
@@ -242,7 +242,7 @@ const Admin = () => {
   }
 
   const deleteLoad = async (id) => {
-    const loadDoc = doc(db, "loads", id);
+    const loadDoc = doc(db, "loads-allagro", id);
     await deleteDoc(loadDoc);
 
     setLoads((prevLoads) => prevLoads.filter((load) => load.id !== id));
