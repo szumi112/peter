@@ -35,7 +35,12 @@ function App() {
           ) : (
             <Route path="/dashboard" element={<LoginPlease />} />
           )}
-          {isAuth && userInfo == "test1@test1.com" ? (
+          {isAuth &&
+          [
+            "test1@test1.com",
+            "suzanna.k@kcharles.co.uk",
+            "peter@kcharles.co.uk",
+          ].includes(userInfo) ? (
             <Route path="/admin" element={<Admin />} />
           ) : (
             <Route path="/admin" element={<LoginPlease />} />
